@@ -6,6 +6,7 @@ card quizzing.
 
 **Flashcards is under active development.**
 
+Source is on github: http://github.com/doubledubba/flashcards.git
 It has recently been revived (5/5/12)
 
 Here is the old version: https://launchpad.net/pyflashcards
