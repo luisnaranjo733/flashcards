@@ -1,6 +1,8 @@
 try:
     from setuptools import setup
 except ImportError:
+    print "FAILED TO IMPORT SETUPTOOLS"
+    print "USING DISTUTILS"
     from distutils.core import setup
     
 import os
@@ -22,7 +24,7 @@ setup(
     keywords = "study flashcard replacement command line utility",
     url = "https://launchpad.net/pyflashcards",
     packages=['flashcards'],
-    long_description=read('README.txt'),
+    long_description=read('README.rst'),
     classifiers=[
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Topic :: Utilities",
