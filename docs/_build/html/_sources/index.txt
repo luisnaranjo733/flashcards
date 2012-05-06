@@ -1,12 +1,18 @@
-.. Flashcards documentation master file, created by
-   sphinx-quickstart on Sat May  5 18:22:50 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to Flashcards's documentation!
 ======================================
 
-Contents:
+A simple memorization tool, written in **python**, similar to physical flash
+card quizzing.
+
+**Flashcards is under active development.**
+
+It has recently been revived (5/5/12)
+
+Here is the old version: https://launchpad.net/pyflashcards
+
+The older version was written messily, with manual SQL expressions.
+
+This one will be a lot cleaner, and will depend on SQLAlchemy (0.7.7)
 
 .. toctree::
    :maxdepth: 2
