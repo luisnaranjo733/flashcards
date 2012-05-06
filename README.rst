@@ -5,6 +5,8 @@ A simple memorization tool, written in **python**, similar to physical flash car
 
 **Flashcards is under active development.**
 
+Source is up on github: http://github.com/doubledubba/flashcards.git
+
 It has recently been revived (5/5/12)
 
 Here is the old version: https://launchpad.net/pyflashcards
