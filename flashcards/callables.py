@@ -2,7 +2,7 @@
 
 import getpass
 from datetime import datetime
-from database.models import session, User
+from models import session, User
 from sqlalchemy import and_
 
 def get_credentials():
