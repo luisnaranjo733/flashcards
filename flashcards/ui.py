@@ -4,7 +4,7 @@ External dependency: clui"""
 from clui import base_clui
 
 #------------------------------------------------------------------------
-import callable # (placeholders)
+import callables # (placeholders)
 #------------------------------------------------------------------------
 
 
@@ -17,10 +17,16 @@ main.exit_message = 'Bye Bye!'
 main.buffer = '='*72
 
 main.add(
-        callables=[callable.login],
-        display_name = 'Login',
-        patterns = ['^login$','^l(og|et) +me +in$'],)
+    callables=[callables.login],
+    display_name = 'Login',
+    patterns = ['^log( +)?in$','^l(og|et) +me +in$'],
+    )
 
+main.add(
+    callables=[callables.add_user],
+    display_name = 'Add user',
+    patterns = ['^[Aa]dd +(a +) [Uu]ser$']
+    )
 main.execute()
 #------------------------------------------------------------------------
 

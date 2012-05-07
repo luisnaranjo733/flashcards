@@ -1,22 +1,42 @@
 "Callable functions to be used by the ui"
 
 import getpass
-from database import models
+from datetime import datetime
+from database.models import session, User
+from sqlalchemy import and_
 
 def get_credentials():
     default_username = getpass.getuser() #OS Username
     username = getpass.getpass("Username (ENTER to use %s): " % default_username)
     
     if username.lower() == 'y' or username == '': username = default_username
+    password = getpass.getpass()
+    date = datetime.now()
     
-    
-    credential = {'username':username,'password':getpass.getpass()}
+    credential = {'username':username,'password':password,'date':date}
     return credential
 
 def add_user():
     credential = get_credentials()
-    user = models.User(credential['username'],credential['password'])
-    models.session.add(user)
-    models.session.commit()
+    
+    existing = session.query(User).filter_by(username=credential['username']).all()
+    if existing:
+        print "%s entry already exists!" % credential['username']
+        return
+    if not existing:
+        print "Creating database entry for '%s'" % credential['username']
+        user = User(credential['username'],credential['password'],credential['date'])
+        session.add(user)
+        session.commit()
 
-add_user()
+def login():
+    credential = get_credentials()
+    successful = session.query(User).filter(and_(User.username == credential['username'], User.password == credential['password'])).scalar()
+    
+    if successful:
+        print "Congradulations! You have succesfully logged in!"
+        
+    if not successful:
+        print "Incorrect username or password!\nTry again!"
+
+

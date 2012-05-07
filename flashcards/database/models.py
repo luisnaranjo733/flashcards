@@ -19,21 +19,23 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     password = Column(String)
+    date = Column(DateTime)
    
-    def __init__(self, username, password):
+    def __init__(self, username, password, date):
         self.username = username
         self.password = password
+        self.date = date #datetime.datetime object - converted back and forth from string
    
     def __repr__(self):
-       return "<User('%s', '%s')>" % (self.username, self.password)
+       return "<User('%s', '%s','%s')>" % (self.username, self.password, self.date)
        
-Base.metadata.create_all(engine)
+Base.metadata.create_all(engine) #init table?
 
 #luis_user = User('Luis', 'password')
 
 #session.add(luis_user)
 
-def show_users():
+def show_users(): #potentially dangerous!
     pprint.pprint(session.query(User).all())
 
 session.commit()
