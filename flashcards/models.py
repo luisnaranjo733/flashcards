@@ -63,8 +63,7 @@ class Flashcard(Base):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
     question = Column(String)
-    #answer = Column(String) #TODO: Make this a reference to Answer table in the db - more coolness will follow.
-    answer = relationship('Answer')
+    answers = relationship('Answer')
     parent_id = Column(Integer, ForeignKey('set.id'))
 
     def __repr__(self):
@@ -97,30 +96,5 @@ class Answer(Base):
         
 Base.metadata.create_all(engine) #init table?
 
-
-ww2 = Flashcard()
-ww2.question = 'When did WWII start?'
-
-answer = Answer()
-answer.answer = '1939'
-ww2.answer.append(answer)
-
-history = Set()
-history.name = 'history'
-
-history.flashcards.append(ww2)
-
-
-
-session.add(ww2)
-session.add(history)
-
-
-session.commit()
-
-if DEBUG:
-    print "History flashcards:\t", history.flashcards
-    print "Question of first flashcard:\t", history.flashcards[0].question
-    print "Answer:\t", history.flashcards[0].answer[0].answer
 
 
