@@ -23,13 +23,17 @@ class User(Base):
     password = Column(String)
     date = Column(DateTime)
    
-    def __init__(self, username, password):
+    def __init__(self, username=None, password=None):
+        
+        if username:
+            self.username = username
+        if password:
+            self.password = password
+
         from datetime import datetime
         date = datetime.now()
-        self.username = username
-        self.password = password
         self.date = date #datetime.datetime object - converted back and forth from string
-   
+                    
     def __repr__(self):
        return "<User('%s', '%s','%s')>" % (self.username, self.password, self.date)
 

@@ -18,15 +18,19 @@ def get_credentials():
     return credential
 
 def add_user():
-    credential = get_credentials()
+    credential = get_credentials() #Retrieve user input as a dictionary - 'username' and 'password' keys
     
-    existing = session.query(User).filter_by(username=credential['username']).all()
+    existing = session.query(User).filter_by(username=credential['username']).all() #find all presisted users in the db with the same given username
+    
     if existing:
         print "%s entry already exists!" % credential['username']
         return
     if not existing:
         print "Creating database entry for '%s'" % credential['username']
-        user = User(credential['username'],credential['password'])#,credential['date'])
+        user = User()
+        user.username = credential['username']
+        user.password = credential['password']
+        
         session.add(user)
         session.commit()
 
