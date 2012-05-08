@@ -1,10 +1,10 @@
-from sqlalchemy import Column, Integer, String, create_engine, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, create_engine, DateTime, ForeignKey, PickleType
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 import os
 
-DEBUG = True
+DEBUG = False
 
 if not DEBUG:
     PATH = os.path.join(
@@ -63,7 +63,8 @@ class Flashcard(Base):
     id = Column(Integer, primary_key=True)
     date = Column(DateTime)
     question = Column(String)
-    answers = relationship('Answer')
+    answers = Column(PickleType)
+    
     parent_id = Column(Integer, ForeignKey('set.id'))
 
     def __repr__(self):
@@ -76,25 +77,7 @@ class Flashcard(Base):
         self.date = date #datetime.datetime object - converted back and forth from string
         del datetime
         
-class Answer(Base):
-    __tablename__ = 'answer'
-    
-    id = Column(Integer, primary_key=True)
-    date = Column(DateTime)
-    answer = Column(String)
-    parent_id = Column(Integer, ForeignKey('flashcard.id'))
 
-    def __repr__(self):
-        return "<Answer(%s)>" % self.answer[:20] #First 20 chars
-
-    def __init__(self):
-        from datetime import datetime
-        
-        date = datetime.now()
-        self.date = date #datetime.datetime object - converted back and forth from string
-        del datetime
-        
 Base.metadata.create_all(engine) #init table?
-
 
 
