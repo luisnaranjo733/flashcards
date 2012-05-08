@@ -30,7 +30,7 @@ main.add(
     )
 
 main.add(
-    callables=[models.show_users],
+    callables=[callables.show_users],
     display_name='List users',
     patterns=['^(list|show) *(all *)?users?$']
     )

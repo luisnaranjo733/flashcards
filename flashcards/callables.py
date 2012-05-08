@@ -4,6 +4,7 @@ import getpass
 from datetime import datetime
 from models import session, User
 from sqlalchemy import and_
+from pprint import pprint
 
 def get_credentials():
     default_username = getpass.getuser() #OS Username
@@ -13,7 +14,7 @@ def get_credentials():
     password = getpass.getpass()
     date = datetime.now()
     
-    credential = {'username':username,'password':password,'date':date}
+    credential = {'username':username,'password':password}#,'date':date}
     return credential
 
 def add_user():
@@ -25,7 +26,7 @@ def add_user():
         return
     if not existing:
         print "Creating database entry for '%s'" % credential['username']
-        user = User(credential['username'],credential['password'],credential['date'])
+        user = User(credential['username'],credential['password'])#,credential['date'])
         session.add(user)
         session.commit()
 
@@ -39,4 +40,13 @@ def login():
     if not successful:
         print "Incorrect username or password!\nTry again!"
 
+def show_users(): #potentially dangerous!
+    users = session.query(User).all()
+    information = []
+    
+    for user in users:
+        block = (str(user.username),str(user.date))
+        information.append(block)
+        
+    pprint(information)
 
