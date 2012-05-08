@@ -2,10 +2,13 @@ from sqlalchemy import Column, Integer, String, create_engine, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-import pprint,os
+from pprint import pprint
+import os
 
 DEBUG = False
-PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),'flashcards.db') #Path to DB
+PATH = os.path.join(
+        os.path.abspath(os.path.dirname(__file__))
+        ,os.path.join('data','flashcards.db')) #Path to DB
 
 engine = create_engine('sqlite:///{path}'.format(path=PATH), echo=DEBUG)
 Session = sessionmaker(bind=engine)
@@ -28,16 +31,16 @@ class User(Base):
    
     def __repr__(self):
        return "<User('%s', '%s','%s')>" % (self.username, self.password, self.date)
-       
+ 
+      
 Base.metadata.create_all(engine) #init table?
 
-#luis_user = User('Luis', 'password')
-
-#session.add(luis_user)
-
 def show_users(): #potentially dangerous!
-    pprint.pprint(session.query(User).all())
+    users = session.query(User).all()
+    user_names = [user.username for user in users]
+    pprint(user_names)
 
 session.commit()
 
-show_users()
+if __name__ == '__main__':
+    show_users()

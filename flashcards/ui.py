@@ -5,6 +5,7 @@ from clui import base_clui
 
 #------------------------------------------------------------------------
 import callables # (placeholders)
+import models
 #------------------------------------------------------------------------
 
 
@@ -26,6 +27,12 @@ main.add(
     callables=[callables.add_user],
     display_name = 'Add user',
     patterns = ['^[Aa]dd +(a +) [Uu]ser$']
+    )
+
+main.add(
+    callables=[models.show_users],
+    display_name='List users',
+    patterns=['^(list|show) *(all *)?users?$']
     )
 main.execute()
 #------------------------------------------------------------------------
