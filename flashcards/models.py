@@ -18,22 +18,14 @@ Session = sessionmaker(bind=engine)
 session = Session()
 Base = declarative_base()
 
-class Base_with_Date(Base):
-
-    def __init__(self):
-        from datetime import datetime
-        
-        date = datetime.now()
-        self.date = date #datetime.datetime object - converted back and forth from string
-        del datetime
         
 class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
+    date = Column(DateTime)
     username = Column(String)
     password = Column(String)
-    date = Column(DateTime)
     #TODO: relationship('sets')
    
     def __init__(self):
@@ -50,6 +42,7 @@ class Set(Base):
     __tablename__ = 'set'
     
     id = Column(Integer, primary_key=True)
+    date = Column(DateTime)
     name = Column(String)
     
     flashcards = relationship("Flashcard")
@@ -57,10 +50,18 @@ class Set(Base):
     def __repr__(self):
         return "<Set of '%s' flashcards>" % self.name
     
+    def __init__(self):
+        from datetime import datetime
+        
+        date = datetime.now()
+        self.date = date #datetime.datetime object - converted back and forth from string
+        del datetime
+        
 class Flashcard(Base):
     __tablename__ = 'flashcard'
     
     id = Column(Integer, primary_key=True)
+    date = Column(DateTime)
     question = Column(String)
     answer = Column(String) #TODO: Make this a reference to Answer table in the db - more coolness will follow.
     parent_id = Column(Integer, ForeignKey('set.id'))
@@ -68,7 +69,13 @@ class Flashcard(Base):
     def __repr__(self):
         return "<Flashcard(%s)>" % self.question[:20] #First 20 chars
 
-      
+    def __init__(self):
+        from datetime import datetime
+        
+        date = datetime.now()
+        self.date = date #datetime.datetime object - converted back and forth from string
+        del datetime
+        
 Base.metadata.create_all(engine) #init table?
 
 
@@ -89,5 +96,4 @@ session.add(history)
 
 session.commit()
 
-print history.flashcards
 
