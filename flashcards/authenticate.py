@@ -50,7 +50,7 @@ def add_user():
             logger.debug("Adding duplicate username '%s'" % credential['username'])
 
     if not existing:
-        logger.info("Creating database entry for '%s'" % credential['username'])
+        logger.debug("Creating database entry for '%s'" % credential['username'])
         user = User()
         user.username = credential['username']
         user.password = credential['password']
@@ -82,10 +82,11 @@ def show_users(): #
     Returns the list of users in the database."""
     
     users = session.query(User).all()
-    
+
     if not users: users = "No users in the database yet!"
     
     pprint(users)
+    logger.debug("Displayed all users")
     
     return users
 
