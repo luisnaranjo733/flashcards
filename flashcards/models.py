@@ -24,6 +24,12 @@ session = Session()
 Base = declarative_base()
 
 
+class BundleError(Exception):
+    """For catching errors that have to do with Bundle objects."""
+
+    def __init__(self, error=None):
+        self.error = error
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -43,63 +49,88 @@ class User(Base):
         display_password = '*' * len(self.password)
         return "<User('%s', '%s','%s')>" % (self.username, display_password, self.date_created)
 
-    def add_bundle(self, name):
+    def add_bundle(self, name, repeat=False, ignore_repeat=False):  # Named args untested
         """Create a bundle of flashcards on an instance.
+
+Args:
+
+repeat: if true, a bundle will be added even if it already exists, without consent.
+ignore_repeat: If true, and the bundle already exists, the function will just return None.
 
 Returns the bundle object if it was created."""
 
-        existing = session.query(Bundle).filter_by(name=name).first()
+        existing_bundle = session.query(Bundle).filter_by(name=name).first()
 
-        if existing:  # If a bundle with the title 'name' already exists.
+        # If a bundle with the title 'name' already exists.
+        if existing_bundle in self.bundles and not repeat and not ignore_repeat:  # TODO: Document repeat and ignore_repeat
             logger.warning("A bundle with the title '%s' already exists." % name)
             stop = raw_input("Continue? (y/n)").lower()
             if stop != 'y':
                 logger.info("Cancelled the order to add the '%s' bundle, because it already existed." % name)
                 return
 
+        if existing_bundle and ignore_repeat:  # TODO: Document ignore_repeat and what this block of code does.
+            return
 
         bundle = Bundle()
         bundle.name = name
-        logger.debug("Created a '%s' bundle." % name)
+        logger.info("Created a Bundle('%s')" % name)
 
         session.add(bundle)
-        logger.debug("Added the %s bundle to the session" % name)
+        logger.info("Added the Bundle('%s') to the session" % name)
 
         self.bundles.append(bundle)
-        logger.debug("Added the %s bundle to the instance list of bundles." % name)
+        logger.info("Added the Bundle('%s') to the instance list of bundles." % name)
 
         session.commit()
-        logger.debug("Made a commit to the session.")
+        logger.info("Session commit")
 
         return bundle
 
-    def remove_bundle(self, bundle=None, name=None):
-        """Removes a bundle from self.bundles, and **does not** delete bundle from database.
 
-Args*
-
-bundle is a bundle object, which will be removed
-
-name is a bundle.name string, which will be queried and removed.
-"""        
-
-        try:
-            self.bundles.remove(bundle)
-            logger.info("Removed the %s bundle from %s" % (bundle.name, self.username))
-
-        except ValueError:
-            logger.error("Bundle('%s') does not exist." % bundle.name)
-
-    def delete_bundle(self, bundle=None, name=None):
+    def delete_bundle(self, bundle_, remove_all=False): #Works like a charm
         """Removes a bundle from self.bundles, and *does* delete bundle from database.
 
 Args*
 
-bundle is a bundle object, which will be removed
+bundle: a bundle object, which will be removed
 
-name is a bundle.name string, which will be used
-to query the bundle object, and then remove+delete.
+name: an optional bundle.name string, which will be used
+to query the first bundle object, and then
+delete the bundle entirely.
+
+all: A boolean to control recursive bundle extermination.
 """
+
+        BundleInstance = isinstance(bundle_, Bundle)
+
+        if BundleInstance:
+            bundle = bundle_
+
+        if not BundleInstance:  # Bundle var must be a Bundle.name of a Bundle instance
+            try:
+                bundle = session.query(Bundle).filter_by(name=bundle_).first()  # Get a bundle object using the given name.
+                if not bundle:
+                    raise BundleError
+
+            except BundleError:
+                logger.warning("'%s' is NOT a Bundle instance OR a Bundle instances' Bundle.name attribute!" % bundle_)
+                logger.warning("Bundle.delete_bundle('%s') failed!" % bundle_)
+                return
+
+        try:
+            self.bundles.remove(bundle)
+            logger.info("Deleted the Bundle('%s') from User('%s')" % (bundle.name, self.username))
+
+        except ValueError:
+            logger.error("ValueError: Bundle('%s') does not exist." % bundle.name)
+
+        session.delete(bundle)
+        logger.info("Deleted the Bundle('%s') from the database registry" % bundle.name)
+
+        session.commit()
+        logger.info("Session commit")
+        
 
 class Bundle(Base):
     __tablename__ = 'bundle'
@@ -142,3 +173,6 @@ class Flashcard(Base):
 
 
 Base.metadata.create_all(engine)  # init table?
+
+#TODO: REMOVE THIS AT ONCE
+user = session.query(User).filter_by(username='luis').first()
