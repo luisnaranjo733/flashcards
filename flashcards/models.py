@@ -4,6 +4,10 @@ from sqlalchemy import Column, Integer, String, create_engine, DateTime, Foreign
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 import os
 
 DEBUG = False
@@ -42,12 +46,42 @@ class User(Base):
     def add_bundle(self, name):
         """Create a bundle of flashcards on an instance."""
 
+        existing = session.query(Bundle).filter_by(name=name).first()
+
+        if existing:  # If a bundle with the title 'name' already exists.
+            logger.warning("A bundle with the title '%s' already exists." % name)
+            stop = raw_input("Continue? (y/n)").lower()
+            if stop != 'y':
+                logger.info("Cancelled the order to add the '%s' bundle, because it already existed." % name)
+                return
+
+
         bundle = Bundle()
         bundle.name = name
         session.add(bundle)
         self.bundles.append(bundle)
         session.commit()
 
+    def remove_bundle(self, bundle=None, name=None):
+        """Removes a bundle from self.bundles, and **does not** delete bundle from database.
+
+Args*
+
+bundle is a bundle object, which will be removed
+
+name is a bundle.name string, which will be queried and removed.
+"""
+
+    def delete_bundle(self, bundle=None, name=None):
+        """Removes a bundle from self.bundles, and *does* delete bundle from database.
+
+Args*
+
+bundle is a bundle object, which will be removed
+
+name is a bundle.name string, which will be used
+to query the bundle object, and then remove+delete.
+"""
 
 class Bundle(Base):
     __tablename__ = 'bundle'
@@ -56,8 +90,8 @@ class Bundle(Base):
     date_created = Column(DateTime)
     name = Column(String)
 
-    flashcards = relationship("Flashcard")
-    user_id = Column(Integer, ForeignKey('user.id'))
+    flashcards = relationship("Flashcard")  # List
+    user_id = Column(Integer, ForeignKey('user.id'))  # If no relationship - null
 
     def __repr__(self):
         return "<Bundle of '%s' flashcards>" % self.name
