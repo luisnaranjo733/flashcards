@@ -5,6 +5,7 @@ from clui import base_clui
 
 #------------------------------------------------------------------------
 import authenticate # (placeholders)
+import callables
 import models
 #------------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ main.add(
     )
 
 main.add(
-    callables=[authenticate.show_users],
+    callables=[authenticate.__show_users],
     display_name='Show all users',
     patterns=['^(list|show) *(all *)?(of +the +)?users?$']
     )
