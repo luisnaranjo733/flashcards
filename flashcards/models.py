@@ -1,3 +1,5 @@
+"""sqlalchemy models"""
+
 from sqlalchemy import Column, Integer, String, create_engine, DateTime, ForeignKey, PickleType
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base

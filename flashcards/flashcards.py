@@ -1,3 +1,5 @@
+"""Callables for flashcards"""
+
 from models import session, Set, Flashcard
 
 def create_set(name=None):

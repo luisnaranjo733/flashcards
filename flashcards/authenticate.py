@@ -1,4 +1,4 @@
-"Callable functions to be used by the ui"
+"""Authentication for log-in purposes"""
 
 import getpass
 from datetime import datetime
