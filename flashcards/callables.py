@@ -6,6 +6,9 @@ from models import session, User
 from sqlalchemy import and_
 from pprint import pprint
 
+#------------------------------------------------------------------------
+# Login stuff
+
 def get_credentials():
     default_username = getpass.getuser() #OS Username
     username = getpass.getpass("Username (ENTER to use %s): " % default_username)
@@ -53,4 +56,9 @@ def show_users(): #potentially dangerous!
         information.append(block)
         
     pprint(information)
+
+#------------------------------------------------------------------------
+# Flashcard db stuff
+
+
 

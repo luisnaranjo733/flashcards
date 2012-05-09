@@ -58,4 +58,3 @@ def delete_flashcard(name, all=False):
             session.delete(flashcard_set)
         session.commit()
 
-
