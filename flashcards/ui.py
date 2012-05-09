@@ -4,8 +4,7 @@ External dependency: clui"""
 from clui import base_clui
 
 #------------------------------------------------------------------------
-import authenticate # (placeholders)
-import callables
+import authenticate
 import models
 #------------------------------------------------------------------------
 

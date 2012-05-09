@@ -117,7 +117,7 @@ Returns object if successful, or None."""
         print "Incorrect username or password!\n"
         logger.info("Someone unsuccessfully tried to authenticate '%s' at '%s'" % (username, time))
 
-    logger.debug("Returning from authenticate funtion")
+    logger.debug("Returning from authenticate function")
     return successful
 
 
@@ -153,8 +153,6 @@ careful."""
 
     pprint(users)
 
-    logger.info("User var: " + str(user))  # user var is getting an ORM object!???? should be None TODO: Remove this line
-
     if not user:
         authenticated = authenticate()
 
@@ -162,7 +160,6 @@ careful."""
         authenticated = authenticate(user)  # TODO:None for user is deleting anyways? 
 
     if authenticated and authenticated.id:  # id is to make sure it is persisted.
-        logger.info("User var in if clause: " + str(authenticated))
         session.delete(authenticated)
         session.commit()
         logger.debug("Deleted %s" % authenticated)

@@ -22,14 +22,12 @@ if not user: # Initialize user if not exist
 total_users = session.query(User).all()
 
 #========================================================================
-
-bundle_name = 'history'
-bundle = session.query(Bundle).filter_by(name=bundle_name).first()
-
-if not bundle:
-    bundle = user.add_bundle(bundle_name,ignore_repeat=True)
+def init_bundles(): #Creates a bunch of bundles
+    for bundle_name in 'spanish math chemistry'.split():
+        bundle = session.query(Bundle).filter_by(name=bundle_name).first()
+        if not bundle: user.add_bundle(bundle_name, ignore_repeat=True)
+init_bundles()
 
 print "%s's bundles: " % user.username + str(user.bundles)
 
-user.delete_bundle(bundle_name) #TODO: Works the first time
 session.commit()

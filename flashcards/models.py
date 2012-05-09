@@ -88,23 +88,19 @@ Returns the bundle object if it was created."""
         return bundle
 
 
-    def delete_bundle(self, bundle_, remove_all=False): #Works like a charm
+    def delete_bundle(self, bundle_):  # TODO: Add remove_all functionality
         """Removes a bundle from self.bundles, and *does* delete bundle from database.
 
 Args*
 
-bundle: a bundle object, which will be removed
-
-name: an optional bundle.name string, which will be used
-to query the first bundle object, and then
-delete the bundle entirely.
-
-all: A boolean to control recursive bundle extermination.
+Can take a Bundle persisted bundle instance, or a bundle instance's self.name string.
 """
 
         BundleInstance = isinstance(bundle_, Bundle)
+        logger.debug("Is %s an instance of Bundle? %r" % (bundle_, BundleInstance))
 
         if BundleInstance:
+
             bundle = bundle_
 
         if not BundleInstance:  # Bundle var must be a Bundle.name of a Bundle instance
@@ -130,7 +126,7 @@ all: A boolean to control recursive bundle extermination.
 
         session.commit()
         logger.info("Session commit")
-        
+            
 
 class Bundle(Base):
     __tablename__ = 'bundle'
