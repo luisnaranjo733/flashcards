@@ -15,6 +15,14 @@ logger = logging.getLogger(__name__)
 # Login stuff
 
 
+class AuthenticationError(Exception):
+    """A general authentication error."""
+
+    def __init__(self, message=''):
+        Exception.__init__(self)
+        self.message = message
+
+
 def get_credentials():
     """Helper function for getting user input.
 
@@ -28,12 +36,11 @@ def get_credentials():
 
     password = getpass.getpass()
     date = datetime.now()
-    credential = {'username': username, 'password': password}
     print ''
-    return credential
+    return (username, password)
 
 
-def add_user():
+def add_user(username=None, password=None):
     """Adds a user to the database - returns the user object (or None).
 
     If the username already exists in the database, it will
@@ -43,24 +50,28 @@ def add_user():
     a new User because the chosen username already exists."""
 
      #Retrieve user input as a dictionary - 'username' and 'password' keys
-    credential = get_credentials()
+    if not username and not password:
+        username, password = get_credentials()
+
+    if (not username and password) or (not password and username):  # If only one credential is passed
+        raise AuthenticationError("Need both username and password")
 
     #find all presisted users in the db with the same given username
-    existing = session.query(User).filter_by(username=credential['username']).all()
+    existing = session.query(User).filter_by(username=username).all()
 
     if existing:
-        logger.warning("%s entry already exists!" % credential['username'])
+        logger.warning("%s entry already exists!" % username)
         verification = raw_input("Add anyway? (Y/N):\t").upper()
-        statement = "Adding duplicate username '%s'" % credential['username']
+        statement = "Adding duplicate username '%s'" % username
         if verification == 'Y':
             existing = False
             logger.debug(statement)
 
     if not existing:
-        print("Adding'%s' to the database..." % credential['username'])
+        print("Adding'%s' to the database..." % username)
         user = User()
-        user.username = credential['username']
-        user.password = credential['password']
+        user.username = username
+        user.password = password
 
         session.add(user)
         session.commit()
@@ -68,13 +79,22 @@ def add_user():
         return user
 
 
-def authenticate():
+def authenticate(user=None):
     """Authenticates an existing user.
+
+    If a user is passed as an argument,
+    it will try to authenticate it.
+
+    If no user is passed, it asks for user input.
     Returns object if successful, or None."""
 
-    credential = get_credentials()
-    username = credential['username']
-    password = credential['password']
+    if not user:
+        username, password = get_credentials()
+
+    if user:
+        username = user.username
+        password = user.password
+
     successful = session.query(User).filter(and_(User.username == username, User.password == password)).scalar()
     time = datetime.now()
 
