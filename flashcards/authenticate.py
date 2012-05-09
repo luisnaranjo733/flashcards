@@ -21,10 +21,11 @@ def get_credentials():
     Retuns a dict with 'username' and 'password' keys."""
     default_username = getpass.getuser()  # OS Username
     statement = "Username (ENTER to use %s): " % default_username
-    username = getpass.getpass(statement)
+    username = raw_input(statement)
 
     if username.lower() == 'y' or username == '':
         username = default_username
+
     password = getpass.getpass()
     date = datetime.now()
     credential = {'username': username, 'password': password}
@@ -34,15 +35,18 @@ def get_credentials():
 
 def add_user():
     """Adds a user to the database - returns the user object (or None).
+
     If the username already exists in the database, it will
     hesitate and ask for verification.
+
     Will return None if the user decides not to create
     a new User because the chosen username already exists."""
+
      #Retrieve user input as a dictionary - 'username' and 'password' keys
     credential = get_credentials()
+
     #find all presisted users in the db with the same given username
-    existing = session.query(User)
-    existing = existing.filter_by(username=credential['username']).all()
+    existing = session.query(User).filter_by(username=credential['username']).all()
 
     if existing:
         logger.warning("%s entry already exists!" % credential['username'])
@@ -71,8 +75,7 @@ def authenticate():
     credential = get_credentials()
     username = credential['username']
     password = credential['password']
-    expression = User.username == username, User.password == password
-    successful = session.query(User).filter(and_(expression)).scalar()
+    successful = session.query(User).filter(and_(User.username == username, User.password == password)).scalar()
     time = datetime.now()
 
     if successful:
@@ -83,8 +86,7 @@ def authenticate():
 
     if not successful:
         print "Incorrect username or password!\n"
-        srting = "Someone unsuccessfully tried to authenticate '%s' at '%s'"
-        logger.debug(string % (username, time))
+        logger.debug("Someone unsuccessfully tried to authenticate '%s' at '%s'" % (username, time))
 
     return successful
 
