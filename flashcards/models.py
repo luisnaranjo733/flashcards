@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 import os
@@ -58,9 +58,16 @@ class User(Base):
 
         bundle = Bundle()
         bundle.name = name
+        logger.debug("Created a '%s' bundle." % name)
+
         session.add(bundle)
+        logger.debug("Added the %s bundle to the session" % name)
+
         self.bundles.append(bundle)
+        logger.debug("Added the %s bundle to the instance list of bundles." % name)
+
         session.commit()
+        logger.debug("Made a commit to the session.")
 
     def remove_bundle(self, bundle=None, name=None):
         """Removes a bundle from self.bundles, and **does not** delete bundle from database.
