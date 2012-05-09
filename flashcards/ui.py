@@ -18,7 +18,7 @@ main.exit_message = 'Bye Bye!'
 main.buffer = '='*72
 
 main.add(
-    callables=[authenticate.login],
+    callables=[authenticate.authenticate],
     display_name = 'Login',
     patterns = ['^log( +)?in$','^l(og|et) +me +in$'],
     )

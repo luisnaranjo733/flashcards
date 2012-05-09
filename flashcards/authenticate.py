@@ -51,7 +51,7 @@ def add_user():
             logger.debug("Adding duplicate username '%s'" % credential['username'])
 
     if not existing:
-        logger.debug("Creating database entry for '%s'" % credential['username'])
+        print("Adding'%s' to the database..." % credential['username'])
         user = User()
         user.username = credential['username']
         user.password = credential['password']
@@ -61,7 +61,7 @@ def add_user():
     
         return user
 
-def login():
+def authenticate():
     """Authenticates an existing user. Returns object if successful, or None."""
     
     credential = get_credentials()
@@ -94,7 +94,7 @@ def show_users(): #
 def delete_user():
     """Delete a user. That is all."""
     
-    user = login()
+    user = authenticate()
     
     if user:
         session.delete(user)
