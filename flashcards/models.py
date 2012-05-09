@@ -34,10 +34,16 @@ class User(Base):
         
         self.date_created = datetime.now() #datetime.datetime object - converted back and forth from string
         del datetime
+
                     
     def __repr__(self):
         display_password = '*' * len(self.password)
         return "<User('%s', '%s','%s')>" % (self.username, display_password, self.date_created)
+        
+    def create_set(self):
+        """Create a set of flashcards on an instance."""
+        pass
+
 
 class Set(Base):
     __tablename__ = 'set'
@@ -57,7 +63,7 @@ class Set(Base):
         
         self.date_created = datetime.now() #datetime.datetime object - converted back and forth from string
         del datetime
-        
+
 class Flashcard(Base):
     __tablename__ = 'flashcard'
     
