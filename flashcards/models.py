@@ -8,8 +8,7 @@ DEBUG = False
 
 if not DEBUG:
     PATH = os.path.join(
-            os.path.abspath(os.path.dirname(__file__))
-            ,os.path.join('data','flashcards.db')) #Path to DB
+            os.path.abspath(os.path.dirname(__file__)), 'database.db') #Path to DB
 if DEBUG:
     PATH = ':memory:'
     
@@ -46,7 +45,7 @@ class Set(Base):
     name = Column(String)
     
     flashcards = relationship("Flashcard")
-    parent_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
 
     def __repr__(self):
         return "<Set of '%s' flashcards>" % self.name
@@ -65,7 +64,7 @@ class Flashcard(Base):
     question = Column(String)
     answers = Column(PickleType)
     
-    parent_id = Column(Integer, ForeignKey('set.id'))
+    set_id = Column(Integer, ForeignKey('set.id'))
 
     def __repr__(self):
         return "<Flashcard(%s)>" % self.question[:20] #First 20 chars
