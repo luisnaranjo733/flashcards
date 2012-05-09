@@ -26,7 +26,7 @@ class AuthenticationError(Exception):
 def get_credentials():
     """Helper function for getting user input.
 
-    Retuns a dict with 'username' and 'password' keys."""
+Retuns a dict with 'username' and 'password' keys."""
     default_username = getpass.getuser()  # OS Username
     statement = "Username (ENTER to use %s): " % default_username
     username = raw_input(statement)
@@ -43,14 +43,14 @@ def get_credentials():
 def add_user(username=None, password=None):
     """Adds a user to the database - returns the user object (or None).
 
-    If the username already exists in the database, it will
-    hesitate and ask for verification.
+If the username already exists in the database, it will
+hesitate and ask for verification.
 
-    If only username or only password is passed:
-    will raise AuthenticationError
+If only username or only password is passed:
+will raise AuthenticationError
 
-    Will return None if the user decides not to create
-    a new User because the chosen username already exists."""
+Will return None if the user decides not to create
+a new User because the chosen username already exists."""
 
      #Retrieve user input as a dictionary - 'username' and 'password' keys
     if not username and not password:
@@ -91,11 +91,11 @@ def add_user(username=None, password=None):
 def authenticate(user=None):
     """Authenticates an existing user.
 
-    If a user is passed as an argument,
-    it will try to authenticate it.
+If a user is passed as an argument,
+it will try to authenticate it.
 
-    If no user is passed, it asks for user input.
-    Returns object if successful, or None."""
+If no user is passed, it asks for user input.
+Returns object if successful, or None."""
 
     if not user:
         username, password = get_credentials()
