@@ -1,24 +1,24 @@
 """Callables for flashcards"""
 
-from models import session, Set, Flashcard
+from models import session, Bundle, Flashcard
 
-def create_set(name=None):
+def create_bundle(name=None):
     "Creates a Flashcard object, saves it, and returns it"
     
     if not name:
-        name = raw_input("Set name: ")
-    flashcard_set = Set()
-    flashcard_set.name = name
+        name = raw_input("Bundle name: ")
+    flashcard_bundle = Bundle()
+    flashcard_bundle.name = name
     
-    session.add(flashcard_set)
+    session.add(flashcard_bundle)
     session.commit() #TODO: Remove this and wrap it in a recursive code block - when available.
-    return flashcard_set
+    return flashcard_bundle
 
-def show_sets():
-    "Returns a list of all of the sets in the db."
+def show_bundles():
+    "Returns a list of all of the bundles in the db."
     
-    sets = session.query(Set).all()
-    return sets
+    bundles = session.query(Bundle).all()
+    return bundles
 
 def show_flashcards():
     "Returns a list of all of the flashcards in the db."
@@ -26,21 +26,21 @@ def show_flashcards():
     flashcards = session.query(Flashcard).all()
     return flashcards
         
-def delete_set(name, all=False):
-    """For deleting sets (of flashcards).
+def delete_bundle(name, all=False):
+    """For deleting bundles (of flashcards).
 
     Has one **optional** argument
     
     all (False):
-       If activated, will delete every set of flashcards.
+       If activated, will delete every bundle of flashcards.
     """
     if not all:
         session.delete(name)
         session.commit()
         
     if all:
-        for flashcard_set in session.query(Set).all():
-            session.delete(flashcard_set)
+        for flashcard_bundle in session.query(Bundle).all():
+            session.delete(flashcard_bundle)
         session.commit()
     
 def delete_flashcard(name, all=False):
@@ -56,7 +56,7 @@ def delete_flashcard(name, all=False):
         session.commit()
         
     if all:
-        for flashcard_set in session.query(Set).all():
-            session.delete(flashcard_set)
+        for flashcard_bundle in session.query(Bundle).all():
+            session.delete(flashcard_bundle)
         session.commit()
 

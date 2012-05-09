@@ -27,7 +27,7 @@ class User(Base):
     date_created = Column(DateTime)
     username = Column(String)
     password = Column(String)
-    sets = relationship('Set')
+    bundless = relationship('Bundle')
    
     def __init__(self):
         from datetime import datetime
@@ -45,8 +45,8 @@ class User(Base):
         pass
 
 
-class Set(Base):
-    __tablename__ = 'set'
+class Bundle(Base):
+    __tablename__ = 'bundle'
     
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
@@ -56,7 +56,7 @@ class Set(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
 
     def __repr__(self):
-        return "<Set of '%s' flashcards>" % self.name
+        return "<Bundle of '%s' flashcards>" % self.name
     
     def __init__(self):
         from datetime import datetime
@@ -72,7 +72,7 @@ class Flashcard(Base):
     question = Column(String)
     answers = Column(PickleType)
     
-    set_id = Column(Integer, ForeignKey('set.id'))
+    bundle_id = Column(Integer, ForeignKey('bundle.id'))
 
     def __repr__(self):
         return "<Flashcard(%s)>" % self.question[:20] #First 20 chars
