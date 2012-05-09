@@ -34,6 +34,13 @@ main.add(
     display_name='Show all users',
     patterns=['^(list|show) *(all *)?users?$']
     )
+    
+main.add(
+    callables=[authenticate.delete_user],
+    display_name='Delete a user',
+    patterns=['^[Dd]elete +(a +)?[Uu]ser$'],
+    )
+    
 main.execute()
 #------------------------------------------------------------------------
 

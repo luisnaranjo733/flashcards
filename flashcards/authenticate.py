@@ -2,6 +2,7 @@
 
 import getpass
 from datetime import datetime
+from time import strftime
 from models import session, User
 from sqlalchemy import and_
 from pprint import pprint
@@ -67,12 +68,12 @@ def login():
     successful = session.query(User).filter(and_(User.username == credential['username'], User.password == credential['password'])).scalar()
     
     if successful:
-        print "Congradulations! You have succesfully logged in!"
-        logger.debug("'{user}' successfully logged in at '{time}'".format(user=credential['username'],time=datetime.now()))
+        print "You have succesfully authenticated.\n"
+        logger.debug("'{user}' successfully authenticated at '{time}'".format(user=credential['username'],time=datetime.now()))
         
     if not successful:
-        print "Incorrect username or password!\nTry again!"
-        logger.debug("Someone unsuccessfully tried to log into '{user}' at '{time}'".format(user=credential['username'],time=datetime.now()))
+        print "Incorrect username or password!\n"
+        logger.debug("Someone unsuccessfully tried to authenticate into '{user}' at '{time}'".format(user=credential['username'],time=datetime.now()))
 
     return successful
     
@@ -83,13 +84,26 @@ def show_users(): #
     
     users = session.query(User).all()
 
-    if not users: users = "No users in the database yet!"
+    if not users: users = "No users registered in the database!"
     
     pprint(users)
     logger.debug("Displayed all users")
     
     return users
 
+def delete_user():
+    """Delete a user. That is all."""
+    
+    user = login()
+    
+    if user:
+        session.delete(user)
+        session.commit()
+        statement = "Deleted {user} from the database at {time}".format(user=user.username,time=strftime('%x %X'))
+        print statement
+        
+    
+    
 #------------------------------------------------------------------------
 # Flashcard db stuff
 
