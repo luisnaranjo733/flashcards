@@ -8,7 +8,7 @@ from sqlalchemy import and_
 from pprint import pprint
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------
@@ -115,12 +115,13 @@ def authenticate(user=None):
 
     if not successful:
         print "Incorrect username or password!\n"
-        logger.debug("Someone unsuccessfully tried to authenticate '%s' at '%s'" % (username, time))
+        logger.info("Someone unsuccessfully tried to authenticate '%s' at '%s'" % (username, time))
 
+    logger.debug("Returning from authenticate funtion")
     return successful
 
 
-def show_users():
+def __show_users():  # NOT PUBLIC
     """Displays a list of all the authenticated users.
     Usage is safe - __repr__ shows asterisks, not the password.
     Returns the list of users in the database."""
@@ -137,17 +138,36 @@ def show_users():
 
 
 def delete_user(user=None):
-    """Delete a user. That is all."""
+    """Delete a user.
 
-    users = "Users: " + ', '.join([str(user.username) for user in session.query(User).all()])
+If a user *isn't* passed,
+the user will be asked to
+authenticate his/her username.
+
+If a user *is* passed, the
+user will be deleted with
+**no verification**, so be
+careful."""
+
+    users = "Users: " + ', '.join([str(USER.username) for USER in session.query(User).all()])
 
     pprint(users)
 
-    authenticated = authenticate(user)
+    logger.info("User var: " + str(user))  # user var is getting an ORM object!???? should be None TODO: Remove this line
 
-    if authenticated:
-        session.delete(user)
+    if not user:
+        authenticated = authenticate()
+
+    if user:
+        authenticated = authenticate(user)  # TODO:None for user is deleting anyways? 
+
+    if authenticated and authenticated.id:  # id is to make sure it is persisted.
+        logger.info("User var in if clause: " + str(authenticated))
+        session.delete(authenticated)
         session.commit()
+        logger.debug("Deleted %s" % authenticated)
         time = strftime('%x %X')
-        statement = "Removed %s from database at %s" % (user.username, time)
+        statement = "Removed %s from database at %s" % (authenticated.username, time)
         print statement
+
+#from authenticate import *
