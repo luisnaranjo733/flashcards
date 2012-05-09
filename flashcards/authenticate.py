@@ -46,6 +46,9 @@ def add_user(username=None, password=None):
     If the username already exists in the database, it will
     hesitate and ask for verification.
 
+    If only username or only password is passed:
+    will raise AuthenticationError
+
     Will return None if the user decides not to create
     a new User because the chosen username already exists."""
 
@@ -53,8 +56,15 @@ def add_user(username=None, password=None):
     if not username and not password:
         username, password = get_credentials()
 
-    if (not username and password) or (not password and username):  # If only one credential is passed
-        raise AuthenticationError("Need both username and password")
+    # If only one credential is passed
+
+    try:
+        if (not username and password) or ((not password and password != '') and username):
+            raise AuthenticationError("Need both username and password")
+
+    except AuthenticationError, Error:
+        print Error.message
+        logger.debug(Error.message)
 
     #find all presisted users in the db with the same given username
     existing = session.query(User).filter_by(username=username).all()
@@ -62,10 +72,9 @@ def add_user(username=None, password=None):
     if existing:
         logger.warning("%s entry already exists!" % username)
         verification = raw_input("Add anyway? (Y/N):\t").upper()
-        statement = "Adding duplicate username '%s'" % username
         if verification == 'Y':
             existing = False
-            logger.debug(statement)
+            logger.debug("Adding duplicate username '%s'" % username)
 
     if not existing:
         print("Adding'%s' to the database..." % username)
@@ -127,12 +136,16 @@ def show_users():
     return users
 
 
-def delete_user():
+def delete_user(user=None):
     """Delete a user. That is all."""
 
-    user = authenticate()
+    users = "Users: " + ', '.join([str(user.username) for user in session.query(User).all()])
 
-    if user:
+    pprint(users)
+
+    authenticated = authenticate(user)
+
+    if authenticated:
         session.delete(user)
         session.commit()
         time = strftime('%x %X')

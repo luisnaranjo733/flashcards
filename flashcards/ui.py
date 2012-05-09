@@ -26,19 +26,19 @@ main.add(
 main.add(
     callables=[authenticate.add_user],
     display_name = 'Add a user',
-    patterns = ['^[Aa]dd +(a +) [Uu]ser$']
+    patterns = ['^[Aa]dd +(a +)?[Uu]ser$']
     )
 
 main.add(
     callables=[authenticate.show_users],
     display_name='Show all users',
-    patterns=['^(list|show) *(all *)?users?$']
+    patterns=['^(list|show) *(all *)?(of +the +)?users?$']
     )
     
 main.add(
     callables=[authenticate.delete_user],
     display_name='Delete a user',
-    patterns=['^[Dd]elete +(a +)?[Uu]ser$'],
+    patterns=['^[Dd]el(ete)? +(a +)?[Uu]ser$'],
     )
     
 main.execute()
