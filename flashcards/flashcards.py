@@ -2,17 +2,7 @@
 
 from models import session, Bundle, Flashcard
 
-def create_bundle(name=None):
-    "Creates a Flashcard object, saves it, and returns it"
-    
-    if not name:
-        name = raw_input("Bundle name: ")
-    flashcard_bundle = Bundle()
-    flashcard_bundle.name = name
-    
-    session.add(flashcard_bundle)
-    session.commit() #TODO: Remove this and wrap it in a recursive code block - when available.
-    return flashcard_bundle
+
 
 def show_bundles():
     "Returns a list of all of the bundles in the db."

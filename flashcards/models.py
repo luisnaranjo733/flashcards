@@ -44,7 +44,9 @@ class User(Base):
         return "<User('%s', '%s','%s')>" % (self.username, display_password, self.date_created)
 
     def add_bundle(self, name):
-        """Create a bundle of flashcards on an instance."""
+        """Create a bundle of flashcards on an instance.
+
+Returns the bundle object if it was created."""
 
         existing = session.query(Bundle).filter_by(name=name).first()
 
@@ -69,6 +71,8 @@ class User(Base):
         session.commit()
         logger.debug("Made a commit to the session.")
 
+        return bundle
+
     def remove_bundle(self, bundle=None, name=None):
         """Removes a bundle from self.bundles, and **does not** delete bundle from database.
 
@@ -77,7 +81,14 @@ Args*
 bundle is a bundle object, which will be removed
 
 name is a bundle.name string, which will be queried and removed.
-"""
+"""        
+
+        try:
+            self.bundles.remove(bundle)
+            logger.info("Removed the %s bundle from %s" % (bundle.name, self.username))
+
+        except ValueError:
+            logger.error("Bundle('%s') does not exist." % bundle.name)
 
     def delete_bundle(self, bundle=None, name=None):
         """Removes a bundle from self.bundles, and *does* delete bundle from database.
