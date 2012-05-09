@@ -27,7 +27,7 @@ class User(Base):
     date_created = Column(DateTime)
     username = Column(String)
     password = Column(String)
-    bundless = relationship('Bundle')
+    bundles = relationship('Bundle')
 
     def __init__(self):
         from datetime import datetime
@@ -39,9 +39,14 @@ class User(Base):
         display_password = '*' * len(self.password)
         return "<User('%s', '%s','%s')>" % (self.username, display_password, self.date_created)
 
-    def create_bundle(self):
+    def add_bundle(self, name):
         """Create a bundle of flashcards on an instance."""
-        pass
+
+        bundle = Bundle()
+        bundle.name = name
+        session.add(bundle)
+        self.bundles.append(bundle)
+        session.commit()
 
 
 class Bundle(Base):
