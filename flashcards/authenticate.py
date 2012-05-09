@@ -7,13 +7,17 @@ from sqlalchemy import and_
 from pprint import pprint
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 #------------------------------------------------------------------------
 # Login stuff
 
 def get_credentials():
+    """Helper function for getting user input.
+    
+    Retuns a dict with 'username' and 'password' keys."""
+    
     default_username = getpass.getuser() #OS Username
     username = getpass.getpass("Username (ENTER to use %s): " % default_username)
     
@@ -26,10 +30,13 @@ def get_credentials():
     return credential
 
 def add_user():
-    """Adds a user to the database - returns the user object.
+    """Adds a user to the database - returns the user object (or None).
     
     If the username already exists in the database, it will
-    hesitate and ask for verification."""
+    hesitate and ask for verification.
+    
+    Will return None if the user decides not to create
+    a new User because the chosen username already exists."""
     
     credential = get_credentials() #Retrieve user input as a dictionary - 'username' and 'password' keys
     
@@ -51,28 +58,36 @@ def add_user():
         session.add(user)
         session.commit()
     
-    return user
+        return user
 
 def login():
-    """Authenticates an existing user."""
+    """Authenticates an existing user. Returns object if successful, or None."""
     
     credential = get_credentials()
     successful = session.query(User).filter(and_(User.username == credential['username'], User.password == credential['password'])).scalar()
     
     if successful:
         print "Congradulations! You have succesfully logged in!"
+        logger.debug("'{user}' successfully logged in at '{time}'".format(user=credential['username'],time=datetime.now()))
         
     if not successful:
         print "Incorrect username or password!\nTry again!"
+        logger.debug("Someone unsuccessfully tried to log into '{user}' at '{time}'".format(user=credential['username'],time=datetime.now()))
 
-def show_users(): # Safe - __repr__ shows asterisks not password
-    """Displays a list of all the authenticated users."""
+    return successful
+    
+def show_users(): # 
+    """Displays a list of all the authenticated users.
+    Usage is safe - __repr__ shows asterisks, not the password.
+    Returns the list of users in the database."""
     
     users = session.query(User).all()
     
     if not users: users = "No users in the database yet!"
     
     pprint(users)
+    
+    return users
 
 #------------------------------------------------------------------------
 # Flashcard db stuff

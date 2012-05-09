@@ -25,13 +25,13 @@ main.add(
 
 main.add(
     callables=[authenticate.add_user],
-    display_name = 'Add user',
+    display_name = 'Add a user',
     patterns = ['^[Aa]dd +(a +) [Uu]ser$']
     )
 
 main.add(
     callables=[authenticate.show_users],
-    display_name='List users',
+    display_name='Show all users',
     patterns=['^(list|show) *(all *)?users?$']
     )
 main.execute()
