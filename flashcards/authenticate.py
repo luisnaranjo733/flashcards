@@ -14,96 +14,105 @@ logger = logging.getLogger(__name__)
 #------------------------------------------------------------------------
 # Login stuff
 
+
 def get_credentials():
     """Helper function for getting user input.
-    
+
     Retuns a dict with 'username' and 'password' keys."""
-    
-    default_username = getpass.getuser() #OS Username
-    username = getpass.getpass("Username (ENTER to use %s): " % default_username)
-    
-    if username.lower() == 'y' or username == '': username = default_username
+    default_username = getpass.getuser()  # OS Username
+    statement = "Username (ENTER to use %s): " % default_username
+    username = getpass.getpass(statement)
+
+    if username.lower() == 'y' or username == '':
+        username = default_username
     password = getpass.getpass()
     date = datetime.now()
-    
-    credential = {'username':username,'password':password}
+    credential = {'username': username, 'password': password}
     print ''
     return credential
 
+
 def add_user():
     """Adds a user to the database - returns the user object (or None).
-    
     If the username already exists in the database, it will
     hesitate and ask for verification.
-    
     Will return None if the user decides not to create
     a new User because the chosen username already exists."""
-    
-    credential = get_credentials() #Retrieve user input as a dictionary - 'username' and 'password' keys
-    
-    existing = session.query(User).filter_by(username=credential['username']).all() #find all presisted users in the db with the same given username
-    
+     #Retrieve user input as a dictionary - 'username' and 'password' keys
+    credential = get_credentials()
+    #find all presisted users in the db with the same given username
+    existing = session.query(User)
+    existing = existing.filter_by(username=credential['username']).all()
+
     if existing:
         logger.warning("%s entry already exists!" % credential['username'])
         verification = raw_input("Add anyway? (Y/N):\t").upper()
+        statement = "Adding duplicate username '%s'" % credential['username']
         if verification == 'Y':
             existing = False
-            logger.debug("Adding duplicate username '%s'" % credential['username'])
+            logger.debug(statement)
 
     if not existing:
         print("Adding'%s' to the database..." % credential['username'])
         user = User()
         user.username = credential['username']
         user.password = credential['password']
-        
+
         session.add(user)
         session.commit()
-    
+
         return user
 
+
 def authenticate():
-    """Authenticates an existing user. Returns object if successful, or None."""
-    
+    """Authenticates an existing user.
+    Returns object if successful, or None."""
+
     credential = get_credentials()
-    successful = session.query(User).filter(and_(User.username == credential['username'], User.password == credential['password'])).scalar()
-    
+    username = credential['username']
+    password = credential['password']
+    expression = User.username == username, User.password == password
+    successful = session.query(User).filter(and_(expression)).scalar()
+    time = datetime.now()
+
     if successful:
         print "You have succesfully authenticated.\n"
-        logger.debug("'{user}' successfully authenticated at '{time}'".format(user=credential['username'],time=datetime.now()))
-        
+
+        string = "'{user}' successfully authenticated at '{time}'"
+        logger.debug(string.format(user=username, time=time))
+
     if not successful:
         print "Incorrect username or password!\n"
-        logger.debug("Someone unsuccessfully tried to authenticate into '{user}' at '{time}'".format(user=credential['username'],time=datetime.now()))
+        srting = "Someone unsuccessfully tried to authenticate '%s' at '%s'"
+        logger.debug(string % (username, time))
 
     return successful
-    
-def show_users(): # 
+
+
+def show_users():
     """Displays a list of all the authenticated users.
     Usage is safe - __repr__ shows asterisks, not the password.
     Returns the list of users in the database."""
-    
+
     users = session.query(User).all()
 
-    if not users: users = "No users registered in the database!"
-    
+    if not users:
+        users = "No users registered in the database!"
+
     pprint(users)
     logger.debug("Displayed all users")
-    
+
     return users
+
 
 def delete_user():
     """Delete a user. That is all."""
-    
+
     user = authenticate()
-    
+
     if user:
         session.delete(user)
         session.commit()
-        statement = "Deleted {user} from the database at {time}".format(user=user.username,time=strftime('%x %X'))
+        time = strftime('%x %X')
+        statement = "Removed %s from database at %s" % (user.username, time)
         print statement
-        
-    
-    
-#------------------------------------------------------------------------
-# Flashcard db stuff
-
