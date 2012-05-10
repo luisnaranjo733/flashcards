@@ -25,26 +25,35 @@ class Flashcard(Base):
     answers = Column(PickleType)
     deck_id = Column(Integer, ForeignKey('deck.id'))"""
 
+from models import session, DEBUG, User, Deck, Flashcard
 import logging
-logger = logging.getLogger(__name__)
 
-from models import session, User, Deck, Flashcard
-from models import lvl1, lvl2, lvl3, lvl4, lvl5
+if DEBUG: loglevel = logging.DEBUG
+if not DEBUG: loglevel = logging.INFO
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=loglevel)  # DEBUG is a var from models!
+
+from models import lvl1, lvl2, lvl3, lvl4, lvl5, MAXLEVEL
 from models import user, deck, flashcard
 
 def promote(flashcard):
-    if flashcard.level < 6:
-        flashcard.level += 1
-        logger.debug("Promoted %s to level %d." % (flashcard, flashcard.level))
+    """For moving the flashcards from box to box (Leitner system).
 
-    session.commit()
+Moves the given flashcard up by one level, with level 6 at the top"""
+
+    if flashcard.level < MAXLEVEL:
+        flashcard.level += 1
+        logger.info("Promoted %s to level %d." % (flashcard, flashcard.level))
+        session.commit()
+        return
+
+    logger.debug("Couldn't promote %s because it's level is already %d." % (flashcard, MAXLEVEL))
+
 
 def demote(flashcard):
-    pass
+    """For reseting the level of a flashcard (Leitner system)."""
 
-def _status(flashcard):
-    print "%s is at level %d" % (flashcard, flashcard.level)
-
-_status(flashcard)
-promote(flashcard)
-_status(flashcard)
+    flashcard.level = 1
+    session.commit()
+    logger.info("Demoted %s to level %d." % (flashcard, flashcard.level))
