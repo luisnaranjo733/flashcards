@@ -168,6 +168,7 @@ class Flashcard(Base):
         self.answers = []
         self.history = []  #TODO: Implement this Tuple(date accessed, time spent thinking, right/wrong)
 
+        
 class CardBox(Base):
     __tablename__ = 'cardbox'
     id = Column(Integer, primary_key=True)
@@ -204,24 +205,31 @@ if not deck and DEBUG:
     session.add(deck)
 
 if not flashcard and DEBUG:
-    flashcard = Flashcard()
-    flashcard.question = 'When did World War II end?'  # Add a question to this flashcard
-    flashcard.answers.append('^1944$') #Add a answer to this flashard
+    flashcard1 = Flashcard()
+    flashcard1.question = 'When did World War II end?'  # Add a question to this flashcard
+    flashcard1.answers.append('^1944$') #Add a answer to this flashard
     logging.info("Created flashcard (level 1)")
-    deck.flashcards.append(flashcard)  # Add this flashcard to the deck instance created above
-    session.add(flashcard)  # Add to the sqlalchemy session
+    deck.flashcards.append(flashcard1)  # Add this flashcard to the deck instance created above
+    session.add(flashcard1)  # Add to the sqlalchemy session
 
-    flashcard = Flashcard()
-    flashcard.question = "When is Luis' birthday?"
-    flashcard.answers.append('^1995$')
-    flashcard.level = 2  # Defaults to 1 on __init__
+    flashcard2 = Flashcard()
+    flashcard2.question = "When is Luis' birthday?"
+    flashcard2.answers.append('^1995$')
+    flashcard2.level = 2  # Defaults to 1 on __init__
     logging.info("Created flashcard (level 2)")
-    deck.flashcards.append(flashcard)
-    session.add(flashcard)
+    deck.flashcards.append(flashcard2)
+    session.add(flashcard2)
 
-    user.decks.append(deck)
+    flashcard3 = Flashcard()
+    flashcard3.question = "What school does Luis go to?"
+    flashcard3.answers.append('^[Bb]ishop +[Bb]lanchet *([Hh]igh +?)?([Ss]chool)?$')
+    flashcard3.level = 3  # Defaults to 1 on __init__
+    logging.info("Created flashcard (level 3)")
+    deck.flashcards.append(flashcard3)
+    session.add(flashcard3)
 
-    deck.flashcards.append(flashcard)
+    user.decks.append(deck)  # Add the deck with flashcards in it to the user's list of decks.
+
 if not cardbox and DEBUG:
     for level in range(1, MAXLEVEL+1):
         cardbox = CardBox()

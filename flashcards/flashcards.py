@@ -44,12 +44,25 @@ When we reach the final level, we are done."""
     lowest = levels[0]
     return session.query(CardBox).filter_by(level=lowest).first()
 
+
+def promote_all():
+    for card in session.query(Flashcard).all():
+        promote(card)
+
+
+def demote_all():
+    for card in session.query(Flashcard).all():
+        demote(card)
+
+
+# Private helper functions for development
+#========================================================================
+
+from nose.tools import *
+
 def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
-        print card
-        print card.level
+        print "%s is at level %d." % (card,card.level)
 
 
-print lvl1.cards()
-print lvl2.cards()
-
+_info()
