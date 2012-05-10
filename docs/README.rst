@@ -1,1 +1,4 @@
-index.rst
+Documentation
+=============
+
+Please refer to flashcards.readthedocs.org

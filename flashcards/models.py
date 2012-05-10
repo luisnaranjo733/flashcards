@@ -205,13 +205,23 @@ if not deck and DEBUG:
 
 if not flashcard and DEBUG:
     flashcard = Flashcard()
-    flashcard.question = 'When did World War II end?'
-    flashcard.answers.append('^1944$')
-    logging.info("Created flashcard")
+    flashcard.question = 'When did World War II end?'  # Add a question to this flashcard
+    flashcard.answers.append('^1944$') #Add a answer to this flashard
+    logging.info("Created flashcard (level 1)")
+    deck.flashcards.append(flashcard)  # Add this flashcard to the deck instance created above
+    session.add(flashcard)  # Add to the sqlalchemy session
+
+    flashcard = Flashcard()
+    flashcard.question = "When is Luis' birthday?"
+    flashcard.answers.append('^1995$')
+    flashcard.level = 2  # Defaults to 1 on __init__
+    logging.info("Created flashcard (level 2)")
     deck.flashcards.append(flashcard)
-    user.decks.append(deck)
     session.add(flashcard)
 
+    user.decks.append(deck)
+
+    deck.flashcards.append(flashcard)
 if not cardbox and DEBUG:
     for level in range(1, MAXLEVEL+1):
         cardbox = CardBox()

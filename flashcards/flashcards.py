@@ -49,8 +49,6 @@ def _info(): #Display info for debugging
         print card
         print card.level
 
-#promote(session.query(Flashcard).filter_by(id=4).first())
-#_info()
 
 print lvl1.cards()
 print lvl2.cards()
