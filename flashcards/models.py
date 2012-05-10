@@ -150,7 +150,8 @@ class Flashcard(Base):
     answers = Column(PickleType)
     correct = Column(Integer)
     incorrect = Column(Integer)
-    deck_id = Column(Integer, ForeignKey('deck.id'))
+    current_level = Column(Integer)
+    deck_id = Column(Integer, ForeignKey('deck.id'))  # Who I belong to
 
     def __repr__(self):
         return "<Flashcard('%s')>" % self.question[:40]  # First 40 chars
@@ -161,6 +162,7 @@ class Flashcard(Base):
         del datetime
         self.correct = 0
         self.incorrect = 0
+        self.current_level = 1  # Start at level 1
         self.answers = []
 
 class CardBox(Base):
@@ -212,7 +214,6 @@ if not cardbox and DEBUG:
     for level in range(1,6):
         cardbox = CardBox()
         cardbox.level = level
-        cardbox.flashcards.append(flashcard)
         logging.info("Created cardbox level %d" % level)
         session.add(cardbox)
 
