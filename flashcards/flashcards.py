@@ -25,8 +25,26 @@ class Flashcard(Base):
     answers = Column(PickleType)
     deck_id = Column(Integer, ForeignKey('deck.id'))"""
 
-from models import session, User, Deck, Flashcard, CardBox
 import logging
 logger = logging.getLogger(__name__)
 
+from models import session, User, Deck, Flashcard
+from models import lvl1, lvl2, lvl3, lvl4, lvl5
+from models import user, deck, flashcard
 
+def promote(flashcard):
+    if flashcard.level < 6:
+        flashcard.level += 1
+        logger.debug("Promoted %s to level %d." % (flashcard, flashcard.level))
+
+    session.commit()
+
+def demote(flashcard):
+    pass
+
+def _status(flashcard):
+    print "%s is at level %d" % (flashcard, flashcard.level)
+
+_status(flashcard)
+promote(flashcard)
+_status(flashcard)
