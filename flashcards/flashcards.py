@@ -34,7 +34,7 @@ if not DEBUG: loglevel = logging.INFO
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=loglevel)  # DEBUG is a var from models!
 
-from models import lvl1, lvl2, lvl3, lvl4, lvl5, MAXLEVEL
+from models import lvl1, lvl2, lvl3, MAXLEVEL
 from models import user, deck, flashcard
 
 def promote(flashcard):
@@ -46,9 +46,10 @@ Moves the given flashcard up by one level, with level 6 at the top"""
         flashcard.level += 1
         logger.info("Promoted %s to level %d." % (flashcard, flashcard.level))
         session.commit()
-        return
+        return True
 
     logger.debug("Couldn't promote %s because it's level is already %d." % (flashcard, MAXLEVEL))
+    return False
 
 
 def demote(flashcard):
@@ -57,3 +58,7 @@ def demote(flashcard):
     flashcard.level = 1
     session.commit()
     logger.info("Demoted %s to level %d." % (flashcard, flashcard.level))
+
+demote(flashcard)
+while promote(flashcard): pass
+demote(flashcard)

@@ -6,12 +6,13 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 DEBUG = True
+MAXLEVEL = 3
 
 import logging
-if DEBUG: logtype = logging.DEBUG
-if not DEBUG: logtype = logging.INFO
+if DEBUG: loglevel = logging.DEBUG
+if not DEBUG: loglevel = logging.INFO
 
-logging.basicConfig(level=logtype)
+logging.basicConfig(level=loglevel)
 logger = logging.getLogger(__name__)
 
 
@@ -146,11 +147,12 @@ class Flashcard(Base):
     __tablename__ = 'flashcard'
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
+    history = Column(PickleType)
     question = Column(String)
     answers = Column(PickleType)
     correct = Column(Integer)
     incorrect = Column(Integer)
-    current_level = Column(Integer)
+    level = Column(Integer)
     deck_id = Column(Integer, ForeignKey('deck.id'))  # Who I belong to
 
     def __repr__(self):
@@ -162,8 +164,9 @@ class Flashcard(Base):
         del datetime
         self.correct = 0
         self.incorrect = 0
-        self.current_level = 1  # Start at level 1
+        self.level = 1  # Start at level 1
         self.answers = []
+        self.history = []  #TODO: Implement this Tuple(date accessed, time spent thinking, right/wrong)
 
 class CardBox(Base):
     __tablename__ = 'cardbox'
@@ -211,7 +214,7 @@ if not flashcard and DEBUG:
     session.add(flashcard)
 
 if not cardbox and DEBUG:
-    for level in range(1,6):
+    for level in range(1, MAXLEVEL+1):
         cardbox = CardBox()
         cardbox.level = level
         logging.info("Created cardbox level %d" % level)
@@ -225,5 +228,3 @@ session.commit()
 lvl1 = session.query(CardBox).filter_by(level=1).first()
 lvl2 = session.query(CardBox).filter_by(level=2).first()
 lvl3 = session.query(CardBox).filter_by(level=3).first()
-lvl4 = session.query(CardBox).filter_by(level=4).first()
-lvl5 = session.query(CardBox).filter_by(level=5).first()
