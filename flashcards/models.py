@@ -1,16 +1,21 @@
 """sqlalchemy models"""
 
+import os
 from sqlalchemy import Column, Integer, String, create_engine, DateTime, ForeignKey, PickleType
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
+DEBUG = True
+
 import logging
-logging.basicConfig(level=logging.DEBUG)
+if DEBUG: logtype = logging.DEBUG
+if not DEBUG: logtype = logging.INFO
+
+logging.basicConfig(level=logtype)
 logger = logging.getLogger(__name__)
 
-import os
 
-DEBUG = False
+
 
 PATH = os.path.join(
         os.path.abspath(os.path.dirname(__file__)), 'database.db')  # Path to DB
@@ -178,7 +183,7 @@ Base.metadata.create_all(engine)  # init table?
 
 user = session.query(User).first()
 deck = session.query(Deck).first()
-flashcard = session.query(Deck).first()
+flashcard = session.query(Flashcard).first()
 cardbox = session.query(CardBox).first()
 
 if not user and DEBUG:
@@ -203,7 +208,7 @@ if not flashcard and DEBUG:
     user.decks.append(deck)
     session.add(flashcard)
 
-if not cardbox:
+if not cardbox and DEBUG:
     for level in range(1,6):
         cardbox = CardBox()
         cardbox.level = level
@@ -212,4 +217,12 @@ if not cardbox:
         session.add(cardbox)
 
 session.commit()
-    
+
+#CardBox level containers
+#========================================================================
+
+lvl1 = session.query(CardBox).filter_by(level=1).first()
+lvl2 = session.query(CardBox).filter_by(level=2).first()
+lvl3 = session.query(CardBox).filter_by(level=3).first()
+lvl4 = session.query(CardBox).filter_by(level=4).first()
+lvl5 = session.query(CardBox).filter_by(level=5).first()
