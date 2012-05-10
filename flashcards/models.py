@@ -12,11 +12,8 @@ import os
 
 DEBUG = False
 
-if not DEBUG:
-    PATH = os.path.join(
-            os.path.abspath(os.path.dirname(__file__)), 'database.db')  # Path to DB
-if DEBUG:
-    PATH = ':memory:'
+PATH = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)), 'database.db')  # Path to DB
 
 engine = create_engine('sqlite:///{path}'.format(path=PATH), echo=False)
 Session = sessionmaker(bind=engine)
@@ -151,7 +148,7 @@ class Flashcard(Base):
     deck_id = Column(Integer, ForeignKey('deck.id'))
 
     def __repr__(self):
-        return "<Flashcard('%s')>" % self.question[:40]  # First 20 chars
+        return "<Flashcard('%s')>" % self.question[:40]  # First 40 chars
 
     def __init__(self):
         from datetime import datetime
@@ -159,8 +156,60 @@ class Flashcard(Base):
         del datetime
         self.correct = 0
         self.incorrect = 0
+        self.answers = []
+
+class CardBox(Base):
+    __tablename__ = 'cardbox'
+    id = Column(Integer, primary_key=True)
+    level = Column(Integer)
+    flashcards = Column(PickleType)
+
+    def __repr__(self):
+        return "<CardBox level('%d')>" % self.level
+
+    def __init__(self):
+        self.flashcards = []
+
 
 Base.metadata.create_all(engine)  # init table?
 
-#TODO: REMOVE THIS AT ONCE
-user = session.query(User).filter_by(username='luis').first()
+#Below here are initialized sample objects - for testing.
+#========================================================================
+
+user = session.query(User).first()
+deck = session.query(Deck).first()
+flashcard = session.query(Deck).first()
+cardbox = session.query(CardBox).first()
+
+if not user and DEBUG:
+    user = User()
+    user.username = 'luis'
+    user.password = 'password'
+    logging.info("Created user")
+    session.add(user)
+
+if not deck and DEBUG:
+    deck = Deck()
+    deck.name = 'history'
+    logging.info("Created deck")
+    session.add(deck)
+
+if not flashcard and DEBUG:
+    flashcard = Flashcard()
+    flashcard.question = 'When did World War II end?'
+    flashcard.answers.append('^1944$')
+    logging.info("Created flashcard")
+    deck.flashcards.append(flashcard)
+    user.decks.append(deck)
+    session.add(flashcard)
+
+if not cardbox:
+    for level in range(1,6):
+        cardbox = CardBox()
+        cardbox.level = level
+        cardbox.flashcards.append(flashcard)
+        logging.info("Created cardbox level %d" % level)
+        session.add(cardbox)
+
+session.commit()
+    
