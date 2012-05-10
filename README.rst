@@ -1,13 +1,13 @@
 Flashcards
 ==========
 
-A , similar to physical flash card quizzing.
-
 Flashcards is a simple memorization tool, written in **python**, which aims to emulate real flashcards.
 
-The user can add “bundles” of flashcards for different types of subjects, which are stored in a sqlite3 database. 
+The user can add “decks” of flashcards for different types of subjects, which are stored in a sqlite3 database. 
 
 The user can then quiz his or herself using the Leitner Algorithm, which focuses card repetition based on the most commonly missed cards.
+
+More information on the Leitner Algorithm here: http://flashcarddb.com/leitner
 
 **Flashcards is under active development.**
 

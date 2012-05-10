@@ -5,11 +5,11 @@
     date_created = Column(DateTime)
     username = Column(String)
     password = Column(String)
-    bundles = relationship('Bundle')
+    decks = relationship('Deck')
 
 
-class Bundle(Base):
-    __tablename__ = 'bundle'
+class Deck(Base):
+    __tablename__ = 'deck'
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
     name = Column(String)
@@ -23,20 +23,20 @@ class Flashcard(Base):
     date_created = Column(DateTime)
     question = Column(String)
     answers = Column(PickleType)
-    bundle_id = Column(Integer, ForeignKey('bundle.id'))"""
+    deck_id = Column(Integer, ForeignKey('deck.id'))"""
 
-from models import session, User, Bundle, Flashcard
+from models import session, User, Deck, Flashcard
 import logging
 logger = logging.getLogger(__name__)
 
-def leitner(bundle):
+def leitner(deck):
     """Leitner system based on space repitition for efficient memorization."""
 
     pass
 
 user = session.query(User).first()
-bundle = session.query(Bundle).first()
-flashcard = session.query(Bundle).first()
+deck = session.query(Deck).first()
+flashcard = session.query(Deck).first()
 
-leitner(bundle)
+leitner(deck)
 

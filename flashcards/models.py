@@ -24,8 +24,8 @@ session = Session()
 Base = declarative_base()
 
 
-class BundleError(Exception):
-    """For catching errors that have to do with Bundle objects."""
+class DeckError(Exception):
+    """For catching errors that have to do with Deck objects."""
     def __init__(self, error=None):
         self.error = error
 
@@ -35,7 +35,7 @@ class User(Base):
     date_created = Column(DateTime)
     username = Column(String)
     password = Column(String)
-    bundles = relationship('Bundle')
+    decks = relationship('Deck')
 
     def __init__(self):
         from datetime import datetime
@@ -46,85 +46,85 @@ class User(Base):
         display_password = '*' * len(self.password)
         return "<User('%s', '%s','%s')>" % (self.username, display_password, self.date_created)
 
-    def add_bundle(self, name, repeat=False, ignore_repeat=False):  # Named args untested
-        """Create a bundle of flashcards on an instance.
+    def add_deck(self, name, repeat=False, ignore_repeat=False):  # Named args untested
+        """Create a deck of flashcards on an instance.
 
 Args:
 
-repeat: if true, a bundle will be added even if it already exists, without consent.
-ignore_repeat: If true, and the bundle already exists, the function will just return None.
+repeat: if true, a deck will be added even if it already exists, without consent.
+ignore_repeat: If true, and the deck already exists, the function will just return None.
 
-Returns the bundle object if it was created."""
-        existing_bundle = session.query(Bundle).filter_by(name=name).first()
+Returns the deck object if it was created."""
+        existing_deck = session.query(Deck).filter_by(name=name).first()
 
-        # If a bundle with the title 'name' already exists.
-        if existing_bundle in self.bundles and not repeat and not ignore_repeat:  # TODO: Document repeat and ignore_repeat
-            logger.warning("A bundle with the title '%s' already exists." % name)
+        # If a deck with the title 'name' already exists.
+        if existing_deck in self.decks and not repeat and not ignore_repeat:  # TODO: Document repeat and ignore_repeat
+            logger.warning("A deck with the title '%s' already exists." % name)
             stop = raw_input("Continue? (y/n)").lower()
             if stop != 'y':
-                logger.info("Cancelled the order to add the '%s' bundle, because it already existed." % name)
+                logger.info("Cancelled the order to add the '%s' deck, because it already existed." % name)
                 return
 
-        if existing_bundle and ignore_repeat:  # TODO: Document ignore_repeat and what this block of code does.
+        if existing_deck and ignore_repeat:  # TODO: Document ignore_repeat and what this block of code does.
             return
 
-        bundle = Bundle()
-        bundle.name = name
-        logger.info("Created a Bundle('%s')" % name)
+        deck = Deck()
+        deck.name = name
+        logger.info("Created a Deck('%s')" % name)
 
-        session.add(bundle)
-        logger.info("Added the Bundle('%s') to the session" % name)
+        session.add(deck)
+        logger.info("Added the Deck('%s') to the session" % name)
 
-        self.bundles.append(bundle)
-        logger.info("Added the Bundle('%s') to the instance list of bundles." % name)
+        self.decks.append(deck)
+        logger.info("Added the Deck('%s') to the instance list of decks." % name)
 
         session.commit()
         logger.info("Session commit")
 
-        return bundle
+        return deck
 
 
-    def delete_bundle(self, bundle_):
-        """Removes a bundle from self.bundles, and *does* delete bundle from database.
+    def delete_deck(self, deck_):
+        """Removes a deck from self.decks, and *does* delete the deck from the database.
 
-Can take a persisted Bundle instance, or the self.name string of Bundle instance.
+Can take a persisted Deck instance, or the self.name string of Deck instance.
 
-Raises a BundleError if bundle_ argument is invalid."""
+Raises a DeckError if deck_ argument is invalid."""
 
-        BundleInstance = isinstance(bundle_, Bundle)
-        logger.debug("Is %s an instance of Bundle? %r" % (bundle_, BundleInstance))
+        DeckInstance = isinstance(deck_, Deck)
+        logger.debug("Is %s an instance of Deck? %r" % (deck_, DeckInstance))
 
-        if BundleInstance:
+        if DeckInstance:
 
-            bundle = bundle_
+            deck = deck_
 
-        if not BundleInstance:  # Bundle var must be a Bundle.name of a Bundle instance
+        if not DeckInstance:  # Deck var must be a Deck.name of a Deck instance
             try:
-                bundle = session.query(Bundle).filter_by(name=bundle_).first()  # Get a bundle object using the given name.
-                if not bundle:
-                    raise BundleError
+                deck = session.query(Deck).filter_by(name=deck_).first()  # Get a deck object using the given name.
+                if not deck:
+                    raise DeckError
 
-            except BundleError:
-                logger.warning("'%s' is NOT a Bundle instance OR a Bundle instances' Bundle.name attribute!" % bundle_)
-                logger.warning("Bundle.delete_bundle('%s') failed!" % bundle_)
+            except DeckError:
+                logger.warning("'%s' is NOT a Deck instance OR a Deck instances' Deck.name attribute!" % deck_)
+                logger.warning("Deck.delete_deck('%s') failed!" % deck_)
                 return
 
         try:
-            self.bundles.remove(bundle)
-            logger.info("Deleted the Bundle('%s') from User('%s')" % (bundle.name, self.username))
+            self.decks.remove(deck)
+            logger.info("Deleted the Deck('%s') from User('%s')" % (deck.name, self.username))
 
         except ValueError:
-            logger.error("ValueError: Bundle('%s') does not exist." % bundle.name)
+            logger.error("ValueError: Deck('%s') does not exist." % deck.name)
 
-        session.delete(bundle)
-        logger.info("Deleted the Bundle('%s') from the database registry" % bundle.name)
+        session.delete(deck)
+        logger.info("Deleted the Deck('%s') from the database registry" % deck.name)
 
         session.commit()
         logger.info("Session commit")
             
 
-class Bundle(Base):
-    __tablename__ = 'bundle'
+class Deck(Base):
+    __tablename__ = 'deck'
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
     name = Column(String)
@@ -132,7 +132,7 @@ class Bundle(Base):
     user_id = Column(Integer, ForeignKey('user.id'))  # If no relationship - null
 
     def __repr__(self):
-        return "<Bundle of '%s' flashcards>" % self.name
+        return "<Deck of '%s' flashcards>" % self.name
 
     def __init__(self):
         from datetime import datetime
@@ -148,7 +148,7 @@ class Flashcard(Base):
     answers = Column(PickleType)
     correct = Column(Integer)
     incorrect = Column(Integer)
-    bundle_id = Column(Integer, ForeignKey('bundle.id'))
+    deck_id = Column(Integer, ForeignKey('deck.id'))
 
     def __repr__(self):
         return "<Flashcard('%s')>" % self.question[:40]  # First 20 chars

@@ -22,12 +22,12 @@ if not user: # Initialize user if not exist
 total_users = session.query(User).all()
 
 #========================================================================
-def init_bundles(): #Creates a bunch of bundles
-    for bundle_name in 'spanish math chemistry'.split():
-        bundle = session.query(Bundle).filter_by(name=bundle_name).first()
-        if not bundle: user.add_bundle(bundle_name, ignore_repeat=True)
-init_bundles()
+def init_decks(): #Creates a bunch of decks
+    for deck_name in 'spanish math chemistry'.split():
+        deck = session.query(Deck).filter_by(name=deck_name).first()
+        if not deck: user.add_deck(deck_name, ignore_repeat=True)
+init_decks()
 
-print "%s's bundles: " % user.username + str(user.bundles)
+print "%s's decks: " % user.username + str(user.decks)
 
 session.commit()

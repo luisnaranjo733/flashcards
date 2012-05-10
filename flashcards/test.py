@@ -6,20 +6,20 @@ logger = logging.getLogger(__name__)
 from models import *
 
 user = session.query(User).first()
-bundle = session.query(Bundle).first()
-flashcard = session.query(Bundle).first()
+deck = session.query(Deck).first()
+flashcard = session.query(Deck).first()
 
-if not user or not bundle or not flashcard:
+if not user or not deck or not flashcard:
     user = User()
     user.username = 'luis'
     user.password = 'password'
     session.add(user)
     logging.info("Created user")
 
-    bundle = Bundle()
-    bundle.name = 'history'
-    session.add(bundle)
-    logging.info("Created bundle")
+    deck = Deck()
+    deck.name = 'history'
+    session.add(deck)
+    logging.info("Created deck")
 
 
     flashcard = Flashcard()
@@ -28,18 +28,18 @@ if not user or not bundle or not flashcard:
     session.add(flashcard)
     logging.info("Created flashcard")
 
-    bundle.flashcards.append(flashcard)
-    user.bundles.append(bundle)
+    deck.flashcards.append(flashcard)
+    user.decks.append(deck)
 
     session.commit()
 
 
 
 print user
-print user.bundles[0]
-print user.bundles[0].flashcards[0].question
-print user.bundles[0].flashcards[0].answers
-print user.bundles[0].flashcards[0].correct
-print user.bundles[0].flashcards[0].incorrect
+print user.decks[0]
+print user.decks[0].flashcards[0].question
+print user.decks[0].flashcards[0].answers
+print user.decks[0].flashcards[0].correct
+print user.decks[0].flashcards[0].incorrect
 
 
