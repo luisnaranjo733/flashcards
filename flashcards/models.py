@@ -165,10 +165,10 @@ class Flashcard(Base):
 
     def __init__(self):
         from datetime import datetime
-
         self.date_created = datetime.now()  # datetime.datetime object - converted back and forth from string
         del datetime
-
+        self.correct = 0
+        self.incorrect = 0
 
 Base.metadata.create_all(engine)  # init table?
 
