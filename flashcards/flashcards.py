@@ -25,7 +25,7 @@ class Flashcard(Base):
     answers = Column(PickleType)
     deck_id = Column(Integer, ForeignKey('deck.id'))"""
 
-from models import session, DEBUG, User, Deck, Flashcard
+from models import session, DEBUG, User, Deck, Flashcard, CardBox
 import logging
 
 if DEBUG: loglevel = logging.DEBUG
@@ -59,6 +59,26 @@ def demote(flashcard):
     session.commit()
     logger.info("Demoted %s to level %d." % (flashcard, flashcard.level))
 
-demote(flashcard)
-while promote(flashcard): pass
-demote(flashcard)
+
+def current_state():
+    """Returns a cardbox instance, judging by the lowest level card.
+
+We don't progress a level until there are no flashcards on that level.
+When we reach the final level, we are done."""
+
+    levels = [flashcard.level for flashcard in session.query(Flashcard).all()]
+    levels.sort()
+    lowest = levels[0]
+    return session.query(CardBox).filter_by(level=lowest).first()
+
+def _info(): #Display info for debugging
+    for card in session.query(Flashcard).all():
+        print card
+        print card.level
+
+#promote(session.query(Flashcard).filter_by(id=4).first())
+#_info()
+
+print lvl1.cards()
+print lvl2.cards()
+

@@ -172,13 +172,12 @@ class CardBox(Base):
     __tablename__ = 'cardbox'
     id = Column(Integer, primary_key=True)
     level = Column(Integer)
-    flashcards = Column(PickleType)
 
     def __repr__(self):
         return "<CardBox level('%d')>" % self.level
 
-    def __init__(self):
-        self.flashcards = []
+    def cards(self):
+        return session.query(Flashcard).filter_by(level=self.level).all()
 
 
 Base.metadata.create_all(engine)  # init table?
