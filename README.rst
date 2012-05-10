@@ -19,6 +19,21 @@ Flashcards is using the Leitner Algorithm, which focuses card repetition based o
 
 More information on the Leitner Algorithm here: http://flashcarddb.com/leitner
 
+Installation
+------------
+
+**Flashcards hasn't been uploaded to Cheeseshop yet, **but this is what it will be like once it is done.
+>>> pip install flashcards
+
+or
+
+>>> sudo pip install flashcards
+
+Usage
+-----
+
+$ flashcards
+
 Legacy code
 -----------
 
