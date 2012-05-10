@@ -25,18 +25,8 @@ class Flashcard(Base):
     answers = Column(PickleType)
     deck_id = Column(Integer, ForeignKey('deck.id'))"""
 
-from models import session, User, Deck, Flashcard
+from models import session, User, Deck, Flashcard, CardBox
 import logging
 logger = logging.getLogger(__name__)
 
-def leitner(deck):
-    """Leitner system based on space repitition for efficient memorization."""
-
-    pass
-
-user = session.query(User).first()
-deck = session.query(Deck).first()
-flashcard = session.query(Deck).first()
-
-leitner(deck)
 
