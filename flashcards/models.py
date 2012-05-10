@@ -155,11 +155,13 @@ class Flashcard(Base):
     date_created = Column(DateTime)
     question = Column(String)
     answers = Column(PickleType)
+    correct = Column(Integer)
+    incorrect = Column(Integer)
 
     bundle_id = Column(Integer, ForeignKey('bundle.id'))
 
     def __repr__(self):
-        return "<Flashcard(%s)>" % self.question[:20]  # First 20 chars
+        return "<Flashcard('%s')>" % self.question[:40]  # First 20 chars
 
     def __init__(self):
         from datetime import datetime

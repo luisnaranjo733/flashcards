@@ -1,52 +1,51 @@
-"""Callables for flashcards"""
+"""class User(Base):
+    __tablename__ = 'user'
 
-from models import session, Bundle, Flashcard
+    id = Column(Integer, primary_key=True)
+    date_created = Column(DateTime)
+    username = Column(String)
+    password = Column(String)
+    bundles = relationship('Bundle')
 
 
+class Bundle(Base):
+    __tablename__ = 'bundle'
+    id = Column(Integer, primary_key=True)
+    date_created = Column(DateTime)
+    name = Column(String)
+    flashcards = relationship("Flashcard")  # List
+    user_id = Column(Integer, ForeignKey('user.id'))  # If no relationship - null
 
-def show_bundles():
-    "Returns a list of all of the bundles in the db."
-    
-    bundles = session.query(Bundle).all()
-    return bundles
 
-def show_flashcards():
-    "Returns a list of all of the flashcards in the db."
-    
-    flashcards = session.query(Flashcard).all()
-    return flashcards
-        
-def delete_bundle(name, all=False):
-    """For deleting bundles (of flashcards).
+class Flashcard(Base):
+    __tablename__ = 'flashcard'
+    id = Column(Integer, primary_key=True)
+    date_created = Column(DateTime)
+    question = Column(String)
+    answers = Column(PickleType)
+    bundle_id = Column(Integer, ForeignKey('bundle.id'))"""
 
-    Has one **optional** argument
-    
-    all (False):
-       If activated, will delete every bundle of flashcards.
-    """
-    if not all:
-        session.delete(name)
+from models import session, User, Bundle, Flashcard
+import logging
+logger = logging.getLogger(__name__)
+
+def leitner(bundle):
+    """Leitner system based on space repitition for efficient memorization."""
+
+    logger.info("Initializing leitner system on %s" % bundle)
+    for flashcard in bundle.flashcards:
+        if flashcard.correct == None:
+            flashcard.correct = 0
+            logger.info("Initialized the tally of correct answers on %s" % flashcard)
+        if flashcard.incorrect == None:
+            flashcard.incorrect = 0
+            logger.info("Initialized the tally of incorrect answers on %s" % flashcard)
+
         session.commit()
-        
-    if all:
-        for flashcard_bundle in session.query(Bundle).all():
-            session.delete(flashcard_bundle)
-        session.commit()
-    
-def delete_flashcard(name, all=False):
-    """For deleting flashcards.
 
-    Has one **optional** argument
-    
-    all (False):
-       If activated, will delete every flashcard.
-    """
-    if not all:
-        session.delete(name)
-        session.commit()
-        
-    if all:
-        for flashcard_bundle in session.query(Bundle).all():
-            session.delete(flashcard_bundle)
-        session.commit()
+user = session.query(User).first()
+bundle = session.query(Bundle).first()
+flashcard = session.query(Bundle).first()
+
+leitner(bundle)
 
