@@ -26,13 +26,11 @@ Base = declarative_base()
 
 class BundleError(Exception):
     """For catching errors that have to do with Bundle objects."""
-
     def __init__(self, error=None):
         self.error = error
 
 class User(Base):
     __tablename__ = 'user'
-
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
     username = Column(String)
@@ -41,7 +39,6 @@ class User(Base):
 
     def __init__(self):
         from datetime import datetime
-
         self.date_created = datetime.now()  # datetime.datetime object - converted back and forth from string
         del datetime
 
@@ -58,7 +55,6 @@ repeat: if true, a bundle will be added even if it already exists, without conse
 ignore_repeat: If true, and the bundle already exists, the function will just return None.
 
 Returns the bundle object if it was created."""
-
         existing_bundle = session.query(Bundle).filter_by(name=name).first()
 
         # If a bundle with the title 'name' already exists.
@@ -88,13 +84,12 @@ Returns the bundle object if it was created."""
         return bundle
 
 
-    def delete_bundle(self, bundle_):  # TODO: Add remove_all functionality
+    def delete_bundle(self, bundle_):
         """Removes a bundle from self.bundles, and *does* delete bundle from database.
 
-Args*
+Can take a persisted Bundle instance, or the self.name string of Bundle instance.
 
-Can take a Bundle persisted bundle instance, or a bundle instance's self.name string.
-"""
+Raises a BundleError if bundle_ argument is invalid."""
 
         BundleInstance = isinstance(bundle_, Bundle)
         logger.debug("Is %s an instance of Bundle? %r" % (bundle_, BundleInstance))
@@ -130,11 +125,9 @@ Can take a Bundle persisted bundle instance, or a bundle instance's self.name st
 
 class Bundle(Base):
     __tablename__ = 'bundle'
-
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
     name = Column(String)
-
     flashcards = relationship("Flashcard")  # List
     user_id = Column(Integer, ForeignKey('user.id'))  # If no relationship - null
 
@@ -143,21 +136,18 @@ class Bundle(Base):
 
     def __init__(self):
         from datetime import datetime
-
         self.date_created = datetime.now()  # datetime.datetime object - converted back and forth from string
         del datetime
 
 
 class Flashcard(Base):
     __tablename__ = 'flashcard'
-
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
     question = Column(String)
     answers = Column(PickleType)
     correct = Column(Integer)
     incorrect = Column(Integer)
-
     bundle_id = Column(Integer, ForeignKey('bundle.id'))
 
     def __repr__(self):

@@ -32,16 +32,7 @@ logger = logging.getLogger(__name__)
 def leitner(bundle):
     """Leitner system based on space repitition for efficient memorization."""
 
-    logger.info("Initializing leitner system on %s" % bundle)
-    for flashcard in bundle.flashcards:
-        if flashcard.correct == None:
-            flashcard.correct = 0
-            logger.info("Initialized the tally of correct answers on %s" % flashcard)
-        if flashcard.incorrect == None:
-            flashcard.incorrect = 0
-            logger.info("Initialized the tally of incorrect answers on %s" % flashcard)
-
-        session.commit()
+    pass
 
 user = session.query(User).first()
 bundle = session.query(Bundle).first()
