@@ -3,6 +3,8 @@ Flashcards
 
 **Flashcards is under active development.**
 
+flashcards.readthedocs.org
+
 What is it?
 -----------
 
@@ -33,9 +35,11 @@ or
 Usage
 -----
 
-Test::
+After you've installed flashcards successfully, just enter the following in your shell::
 
-   $flashcards
+   flashcards
+
+And there you go!
 
 Legacy code
 -----------
