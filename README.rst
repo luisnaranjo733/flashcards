@@ -23,6 +23,7 @@ Installation
 ------------
 
 **Flashcards hasn't been uploaded to Cheeseshop yet, **but this is what it will be like once it is done.
+
 >>> pip install flashcards
 
 or
@@ -32,7 +33,9 @@ or
 Usage
 -----
 
-$ flashcards
+Test::
+
+   $flashcards
 
 Legacy code
 -----------
