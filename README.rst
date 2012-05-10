@@ -29,3 +29,8 @@ Here is the old version: https://launchpad.net/pyflashcards
 The older version was written messily, with manual SQL expressions, and the sqlite3 module.
 
 This one will be a lot cleaner, and will depend on SQLAlchemy (0.7.7)
+
+Contact
+-------
+
+For questions, comments, or concerns contact the lead developer, Luis Naranjo <luisnaranjo733@hotmail.com>.
