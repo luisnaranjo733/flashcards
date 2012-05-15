@@ -147,7 +147,7 @@ class Flashcard(Base):
     __tablename__ = 'flashcard'
     id = Column(Integer, primary_key=True)
     date_created = Column(DateTime)
-    history = Column(PickleType)
+    history = Column(PickleType)  # TODO: Implement this Tuple(date accessed, time spent thinking, right/wrong)
     question = Column(String)
     answers = Column(PickleType)
     correct = Column(Integer)
@@ -166,8 +166,7 @@ class Flashcard(Base):
         self.incorrect = 0
         self.level = 1  # Start at level 1
         self.answers = []
-        self.history = []  #TODO: Implement this Tuple(date accessed, time spent thinking, right/wrong)
-
+        self.history = []
         
 class CardBox(Base):
     __tablename__ = 'cardbox'
