@@ -229,18 +229,26 @@ if not flashcard and DEBUG:
 
     user.decks.append(deck)  # Add the deck with flashcards in it to the user's list of decks.
 
+levels = []
+
 if not cardbox and DEBUG:
     for level in range(1, MAXLEVEL+1):
         cardbox = CardBox()
         cardbox.level = level
         logging.info("Created cardbox level %d" % level)
         session.add(cardbox)
+        levels.append(cardbox)
 
 session.commit()
 
 #CardBox level containers
 #========================================================================
 
-lvl1 = session.query(CardBox).filter_by(level=1).first()
-lvl2 = session.query(CardBox).filter_by(level=2).first()
-lvl3 = session.query(CardBox).filter_by(level=3).first()
+
+if not levels:
+    
+    for level in range(1, MAXLEVEL + 1):
+        result = session.query(CardBox).filter_by(level=level).first()
+        levels.append(result)
+
+

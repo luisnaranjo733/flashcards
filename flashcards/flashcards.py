@@ -15,13 +15,15 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.WARNING)  # DEBUG is a var from models!
 
 logger = logging
-from models import lvl1, lvl2, lvl3, MAXLEVEL
+from models import levels, MAXLEVEL
 from models import user, deck, flashcard
 
 def promote(flashcard, response_time=None):
     """For moving the flashcards from box to box (Leitner system).
 
-Moves the given flashcard up by one level, with level 6 at the top"""
+Moves the given flashcard up by one level, with level 3 at the top.
+
+response_time is a datetime delta object."""
 
     if flashcard.level < MAXLEVEL:
         flashcard.level += 1
@@ -80,30 +82,5 @@ def _demote_all():
 def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
         print("%s is at level %d." % (card,card.level))
-        print card.history
 
-def _review(flashcard):
-    time_asked = datetime.now()
 
-    print flashcard.question
-    attempt = raw_input("> ")
-
-    response_time = -(time_asked - datetime.now()).total_seconds()
-
-    for pattern in flashcard.answers:
-        match = re.match(pattern, attempt)
-        logger.debug("Matched '%s' to '%s'" % (pattern, attempt))
-        if match:
-            promote(flashcard, response_time)
-
-        if not match:
-            demote(flashcard, response_time)
-        print response_time
-
-def _leitner():
-    while current_state().level < 3:
-        flashcards = current_state().cards()
-        for flashcard in flashcards:
-            _review(flashcard)
-
-_info()
