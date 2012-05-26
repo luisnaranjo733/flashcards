@@ -16,7 +16,6 @@ logging.basicConfig(level=logging.WARNING)  # DEBUG is a var from models!
 
 logger = logging
 from models import levels, MAXLEVEL
-from models import user, deck, flashcard
 
 def promote(flashcard, response_time=None):
     """For moving the flashcards from box to box (Leitner system).
@@ -83,4 +82,4 @@ def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
         print("%s is at level %d." % (card,card.level))
 
-
+_info()
