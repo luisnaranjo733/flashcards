@@ -53,8 +53,37 @@ When we reach the final level, we are done."""
     if not flashcard_levels:
         raise Exception("No flashcards in the system yet!")
 
-    return session.query(CardBox).filter_by(level=lowest).first()
+    state = session.query(CardBox).filter_by(level=lowest).first()
 
+    return state.level
+
+def validate(attempt, card):
+    """Validate an attempt at a flashcard. Return True/False."""
+
+    for pattern in card.answers:
+        if re.match(pattern, attempt):
+            return True
+
+    return False
+
+def quiz():
+
+    level = current_state()
+    cards = session.query(CardBox).filter_by(level=level).scalar().cards()
+    for card in cards:
+        print('{question} ({level})'.format(question=card.question, level=card.level))
+        attempt = raw_input("> ")
+        correct = validate(attempt, card)
+        if correct:
+            promote(card)
+        if not correct:
+            demote(card)
+        
+    
+def primitive_leitner():
+    while current_state() != MAXLEVEL:
+        quiz()
+    _info()
 
 
 # Private helper functions for development
@@ -75,4 +104,5 @@ def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
         print("%s is at level %d." % (card,card.level))
 
-_info()
+_demote_all()
+primitive_leitner()

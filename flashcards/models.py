@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, String, create_engine, DateTime, Foreign
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-MAXLEVEL = 10
+MAXLEVEL = 3
 
 import logging
 loglevel = logging.DEBUG
