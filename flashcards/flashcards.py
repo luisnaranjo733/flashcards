@@ -3,19 +3,16 @@
 It includes 3 pre-build instances of CardBox (levels 1-3)
 """
 
-from models import session, DEBUG, User, Deck, Flashcard, CardBox
+from models import session, User, Deck, Flashcard, CardBox, MAXLEVEL
+
+from models import loglevel
 import logging
 import re
 from datetime import datetime
 
-if DEBUG: loglevel = logging.DEBUG
-if not DEBUG: loglevel = logging.INFO
-
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.WARNING)  # DEBUG is a var from models!
+logging.basicConfig(level=loglevel)
 
-logger = logging
-from models import levels, MAXLEVEL
 
 def promote(flashcard):
     """For moving the flashcards from box to box (Leitner system).

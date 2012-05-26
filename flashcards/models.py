@@ -5,13 +5,11 @@ from sqlalchemy import Column, Integer, String, create_engine, DateTime, Foreign
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-DEBUG = True
+#DEBUG = True
 MAXLEVEL = 3
 
 import logging
-if DEBUG: loglevel = logging.DEBUG
-if not DEBUG: loglevel = logging.INFO
-
+loglevel = logging.DEBUG
 logging.basicConfig(level=loglevel)
 logger = logging.getLogger(__name__)
 
@@ -90,7 +88,7 @@ if len(levels) == 0 or len(levels) < MAXLEVEL:  # Init leitner cardboxes
     for level in range(1, 1+MAXLEVEL):
         cardbox = CardBox()
         cardbox.level = level
-        logging.info("Created cardbox level %d" % level)
+        logger.info("Created cardbox level %d" % level)
         session.add(cardbox)
         levels.append(cardbox)
 
