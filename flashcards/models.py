@@ -5,8 +5,7 @@ from sqlalchemy import Column, Integer, String, create_engine, DateTime, Foreign
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-#DEBUG = True
-MAXLEVEL = 3
+MAXLEVEL = 10
 
 import logging
 loglevel = logging.DEBUG
@@ -77,10 +76,7 @@ class CardBox(Base):
         return session.query(Flashcard).filter_by(level=self.level).all()
 
 
-Base.metadata.create_all(engine)  # init table?
-
-#Below here are initialized sample objects - for testing.
-#========================================================================
+Base.metadata.create_all(engine)  # init table
 
 levels = session.query(CardBox).all()
 
@@ -92,5 +88,4 @@ if len(levels) == 0 or len(levels) < MAXLEVEL:  # Init leitner cardboxes
         session.add(cardbox)
         levels.append(cardbox)
 
-session.commit()
-
+session.commit()  # TODO: Is this a performance issue?

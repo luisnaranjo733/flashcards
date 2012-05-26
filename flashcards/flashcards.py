@@ -74,3 +74,5 @@ def _demote_all():
 def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
         print("%s is at level %d." % (card,card.level))
+
+_info()
