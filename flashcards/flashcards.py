@@ -17,38 +17,30 @@ logging.basicConfig(level=logging.WARNING)  # DEBUG is a var from models!
 logger = logging
 from models import levels, MAXLEVEL
 
-def promote(flashcard, response_time=None):
+def promote(flashcard):
     """For moving the flashcards from box to box (Leitner system).
 
-Moves the given flashcard up by one level, with level 3 at the top.
+Moves the given flashcard up by one level, with level 3 at the top."""
 
-response_time is a datetime delta object."""
+    flashcard.correct += 1
 
     if flashcard.level < MAXLEVEL:
         flashcard.level += 1
         logger.info("Promoted %s to level %d." % (flashcard, flashcard.level))
 
-    flashcard.correct += 1
-
-    if response_time:
-        flashcard.history.append((response_time, True))
-
     session.commit()
 
-    logger.warning("Couldn't promote %s because it's level is already %d." % (flashcard, MAXLEVEL))
 
-
-
-def demote(flashcard, response_time=None):
+def demote(flashcard):
     """For reseting the level of a flashcard (Leitner system)."""
 
-    flashcard.level = 1
-    flashcard.incorrect += 1
-    if response_time:
-        flashcard.history.append((response_time, False))
+    if flashcard.level > 1:
+        flashcard.level = 1
+        flashcard.incorrect += 1
+        logger.info("Demoted %s to level %d." % (flashcard, flashcard.level))
 
     session.commit()
-    logger.info("Demoted %s to level %d." % (flashcard, flashcard.level))
+
 
 
 def current_state():
@@ -57,9 +49,13 @@ def current_state():
 We don't progress a level until there are no flashcards on that level.
 When we reach the final level, we are done."""
 
-    levels = [flashcard.level for flashcard in session.query(Flashcard).all()]
-    levels.sort()
-    lowest = levels[0]
+    flashcard_levels = [flashcard.level for flashcard in session.query(Flashcard).all()]
+    flashcard_levels.sort()
+    if flashcard_levels:
+        lowest = flashcard_levels[0]
+    if not flashcard_levels:
+        raise Exception("No flashcards in the system yet!")
+
     return session.query(CardBox).filter_by(level=lowest).first()
 
 
@@ -81,5 +77,3 @@ def _demote_all():
 def _info(): #Display info for debugging
     for card in session.query(Flashcard).all():
         print("%s is at level %d." % (card,card.level))
-
-_info()
